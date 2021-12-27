@@ -1,5 +1,10 @@
 # React
 
+## Table of contents
+
+1. About[##about]
+2. Props[##props]
+
 ## About
 
 React is a Javascript Library used to craft modern day UI.
