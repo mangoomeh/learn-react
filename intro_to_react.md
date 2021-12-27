@@ -48,6 +48,7 @@ Each js file should only hold one functional component
     return ( <Child title="hello" /> )
   }
   ```
+  Child:
   ```
   const Child = (props) => { 
     return ( <div>{props.title}</div> )
