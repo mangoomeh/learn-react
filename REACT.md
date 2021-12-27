@@ -63,7 +63,7 @@ React is a Javascript Library used to craft modern day UI.
 
 ### How to import
 
-`import { useState } from React`
+`import { useState } from "react"`
 
 ### How to use
 
@@ -93,7 +93,7 @@ return (
 
 ### How to import
 
-`import { useRef } from React`
+`import { useRef } from "react"`
 
 ### About
 
@@ -119,7 +119,7 @@ const focus = () => {reference.current.focus()} // this changes focus to the inp
 
 - useEffect(() => {}, [])
 - useEffect(() => {})
-- useEffect(() => { return () => {}})
+- useEffect(() => { return () => {} })
 
 ## Conditional Rendering
 
@@ -149,6 +149,7 @@ const focus = () => {reference.current.focus()} // this changes focus to the inp
 `import ReactDOM from "react-dom`
 
 ### About
+
 - create portal takes in JSX component followed by where to put it
 
 ### Usage
@@ -167,3 +168,98 @@ const mainFunctionName => {
   )
 }
 ```
+
+## HTTP Requests
+
+### Javascript ES6 Fetch API
+
+```
+try {
+      const res = await fetch(url);
+      if (res.status !== 200) {
+        throw new Error("Something went wrong.") // throw will go to catch
+      }
+      const data = await res.json();
+      console.log(data);
+    } catch (err) {
+      setError(err.message);
+    }
+```
+
+### Abort Controller
+
+```
+useEffect(() => {
+  const url = "https://jsonplaceholder.typicode.com/posts/" + selection;
+  const controller = new AbortController();
+  fetchPost(url, controller.signal);
+
+  return () => {
+    controller.abort();
+  };
+}, [selection]);
+```
+
+## Context
+
+### About
+
+- useContext is used to pass props easily as opposed to the usual props drilling
+- Danger of useContext is that everything within the context provider gets rerendered when states changes
+
+### How to use
+
+1. Create a context file: <br />
+
+```
+import { createContext } from "react";
+const MyContext = createContext();
+export default MyContext;
+```
+
+2. Import context and wrap the components: <br />
+
+```
+import MyContext from "./MyContext";
+
+const MyComponent = () => {
+  const var1 = "1234"
+  const var2 = "abcd"
+  return (
+    <MyContext.Provider value={var1, var2}>
+      <ChildComponent />
+    </MyContext.Provider>
+  )
+}
+```
+
+3. Access values in child component: <br />
+
+```
+import MyContext from "./MyContext";
+import { useContext } from "react";
+const ChildComponent = () => {
+  const myContext = useContext(MyContext);
+  return (
+    <>
+      <div>{myContext.var1}</div>
+      <div>{myContext.var2}</div>
+    </>
+  )
+}
+```
+
+
+## Reducer
+
+### About
+Similar to useState, reducer is used to deal with more complex state structures such as array and javascript objects or complex logic
+
+### Usage
+1. Import useReducer: <br />
+```
+import { useReducer } from "react";
+```
+2. Set up the reducer function: <br />
+3. Set up useReducer: state, dispatcher
+4. Call dispatcher: dispatcher({type: "typeName"}, payload)
