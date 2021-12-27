@@ -2,16 +2,16 @@
 
 ## Table of contents
 
-1. [About](##About)
-2. [Props](##Props)
-3. [State](##State)
-4. [UseRef](##Ref)
-5. [UseEffect](##Component-Lifecycle)
-6. [ConditionalRedering](##Conditional-Rendering)
-7. [CreatePortal](##Create-Portal)
-8. [HTTP-Requests](##HTTP-Requests)
-9. [UseContext](##Context)
-10. [Reducer](##Reducer)
+1. [About](#about)
+2. [Props](#props)
+3. [State](#state)
+4. [UseRef](#ref)
+5. [UseEffect](#component-lifecycle)
+6. [ConditionalRedering](#conditional-rendering)
+7. [CreatePortal](#create-portal)
+8. [HTTP-Requests](#http-requests)
+9. [UseContext](#context)
+10. [Reducer](#reducer)
 
 ## About
 
