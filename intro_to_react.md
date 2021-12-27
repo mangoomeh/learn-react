@@ -31,26 +31,60 @@ React is a Javascript Library used to craft modern day UI.
 
 - className="myClass"
 - Only one parent can be returned in JSX component
+- Html cannot read javascript objects
+- Wrap javascript in curly braces. E.g. {variableName}
 
 ## Functional component
 
-Each js file should only hold one functional component
+- Each js file should only hold one functional component
+- Component naming convention: CamelCase
 
 ## Props
 
 - Props are properties that can be passed down to a child component from a parent component
 - Props is a javascript object
 - Each prop is a key-value pair
+- Props passing is unidirectional (Parent -> Child)
 - Example usage: <br/><br/>
   Parent:
   ```
-  const Parent = () => { 
+  const Parent = () => {
     return ( <Child title="hello" /> )
   }
   ```
   Child:
   ```
-  const Child = (props) => { 
+  const Child = (props) => {
     return ( <div>{props.title}</div> )
   }
   ```
+
+## State
+
+### How to import
+
+`import { useState } from React`
+
+### How to use
+
+Using array destructuring:
+`const [state, setState] = useState(initialValue);`
+
+### About
+
+- Component rerenders when the function setState is called
+- Rerendering happens only after changing of state
+- Console.log does not log the correct values of state
+
+### Controlled Form for Inputs
+
+```
+const [state, setState] = useState("");
+const handleInput = (event) => {
+  setState(event.target.value);
+}
+
+return (
+<input value={state} onChange={handleInput}>
+)
+```
