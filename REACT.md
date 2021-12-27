@@ -7,7 +7,7 @@
 3. [State](#state)
 4. [UseRef](#ref)
 5. [UseEffect](#component-lifecycle)
-6. [ConditionalRedering](#conditional-rendering)
+6. [ConditionalRendering](#conditional-rendering)
 7. [CreatePortal](#create-portal)
 8. [HTTP-Requests](#http-requests)
 9. [UseContext](#context)
