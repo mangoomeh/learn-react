@@ -2,8 +2,8 @@
 
 ## Table of contents
 
-1. About[##about]
-2. Props[##props]
+1. [About](##about)
+2. [Props](##props)
 
 ## About
 
