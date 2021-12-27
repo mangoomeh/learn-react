@@ -67,7 +67,7 @@ React is a Javascript Library used to craft modern day UI.
 
 ### How to use
 
-Using array destructuring:
+Using array destructuring: <br />
 `const [state, setState] = useState(initialValue);`
 
 ### About
@@ -79,7 +79,7 @@ Using array destructuring:
 ### Controlled Form for Inputs
 
 ```
-const [state, setState] = useState("");
+const [state, setState] = useState(initialValue);
 const handleInput = (event) => {
   setState(event.target.value);
 }
@@ -87,4 +87,68 @@ const handleInput = (event) => {
 return (
 <input value={state} onChange={handleInput}>
 )
+```
+
+## Ref
+
+### How to import
+
+`import { useRef } from React`
+
+### About
+
+- Does not rerender when executed, might rerender
+
+### Uncontrolled Form
+
+```
+const reference = useRef(initialValue);
+<input ref={reference} />
+const focus = () => {reference.current.focus()} // this changes focus to the input element
+```
+
+## Component Lifecycle
+
+### Class Components
+
+- componentDidMount()
+- componentDidUpdate()
+- componentWillUnmount()
+
+### Functional Components Equivalent
+
+- useEffect(() => {}, [])
+- useEffect(() => {})
+- useEffect(() => { return () => {}})
+
+## Conditional Rendering
+
+### Usage
+
+- Shortcircuiting of logic: <br />
+
+```
+{!{isLoading} && {displayComponent}}
+```
+
+- Ternary Operator: <br />
+
+```
+{isLoading ? <LoadingSpinner /> : {displayComponent}}
+```
+
+## About conditionals
+
+- Logical AND (&&) return false when it hits a false-y value and return last value if all earlier values are truth-y
+- Logical OR (||) continues evaluating when it hits a false-y value until it hits a truth-y value
+
+
+## Create Portal
+
+### How to import
+`import ReactDOM from "react-dom`
+
+### Usage
+```
+
 ```
