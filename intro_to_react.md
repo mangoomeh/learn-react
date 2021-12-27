@@ -137,18 +137,33 @@ const focus = () => {reference.current.focus()} // this changes focus to the inp
 {isLoading ? <LoadingSpinner /> : {displayComponent}}
 ```
 
-## About conditionals
+### About conditionals
 
 - Logical AND (&&) return false when it hits a false-y value and return last value if all earlier values are truth-y
 - Logical OR (||) continues evaluating when it hits a false-y value until it hits a truth-y value
 
-
 ## Create Portal
 
 ### How to import
+
 `import ReactDOM from "react-dom`
 
-### Usage
-```
+### About
+- create portal takes in JSX component followed by where to put it
 
+### Usage
+
+Error modal: <br />
+
+```
+const OverLay = () => {}
+const mainFunctionName => {
+  return (
+    <>
+      {ReactDOM.createPortal(
+        <Overlay />, document.querySelector("#modal-root")
+      )}
+    </>
+  )
+}
 ```
