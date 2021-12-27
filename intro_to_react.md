@@ -42,6 +42,7 @@ Each js file should only hold one functional component
 - Props is a javascript object
 - Each prop is a key-value pair
 - Example usage:
-  ```const Component = (props) => { 
+  ```
+  const Component = (props) => { 
     return ( <div>{props.title}</div> )
   ```
