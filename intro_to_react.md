@@ -41,15 +41,13 @@ Each js file should only hold one functional component
 - Props are properties that can be passed down to a child component from a parent component
 - Props is a javascript object
 - Each prop is a key-value pair
-- Example usage: <br/>
+- Example usage: <br/><br/>
   Parent:
   ```
   const Parent = () => { 
     return ( <Child title="hello" /> )
   }
   ```
-  <br />
-  Child:
   ```
   const Child = (props) => { 
     return ( <div>{props.title}</div> )
