@@ -21,7 +21,7 @@ React is a Javascript Library used to craft modern day UI.
 
 ## How to create React app:
 
-`npx create-react-app name-of-app`
+```npx create-react-app name-of-app```
 
 ## How to install with package.json:
 
