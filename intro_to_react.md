@@ -21,7 +21,7 @@ React is a Javascript Library used to craft modern day UI.
 
 ## How to create React app:
 
-```npx create-react-app name-of-app```
+`npx create-react-app name-of-app`
 
 ## How to install with package.json:
 
@@ -42,4 +42,6 @@ Each js file should only hold one functional component
 - Props is a javascript object
 - Each prop is a key-value pair
 - Example usage:
-  `const Component = (props) => { return ( <div>{props.title}</div> )`
+  ```const Component = (props) => { 
+    return ( <div>{props.title}</div> )
+  ```
