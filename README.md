@@ -400,5 +400,33 @@ import { Link } from "react-router-dom";
 ```
 
 ### Some notes
-- React router dom 5 use greedy search for path
-- To fix the issue where main page always appears is to use exact keyword as seen in "3. Set up routes"
+
+- React router dom 5 use greedy search for path so it will always display the main page
+- To fix the issue where only main page is shown is to use exact keyword as seen in "3. Set up routes"
+- Using switch ensures that only one page is displayed at a time, however does not eliminate the greedy search for path problem:
+
+```
+import { Switch } from "react-router-dom";
+
+<Switch>
+  <Route exact path="/">
+    <Main />
+  </Route>
+  <Route path="/page-one">
+    <PageOne />
+  </Route>
+</Switch>
+```
+
+### React Router 6
+- Install latest react router:
+```
+npm i react-router-dom
+```
+#### Notes about React Router 6
+- Pretty new, might not be implemented in many companies
+- No need for Switch
+- No need for exact keyword
+- Wrap all route in `<Routes>`
+- NavLink
+
