@@ -160,7 +160,7 @@ const focus = () => {reference.current.focus()} // this changes focus to the inp
 
 ### How to import
 
-`import ReactDOM from "react-dom`
+`import ReactDOM from "react-dom"`
 
 ### About
 
