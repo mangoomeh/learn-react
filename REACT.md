@@ -98,7 +98,7 @@ const handleInput = (event) => {
 }
 
 return (
-<input value={state} onChange={handleInput}>
+<input value={state} onChange={handleInput} />
 )
 ```
 
@@ -268,11 +268,80 @@ const ChildComponent = () => {
 ### About
 Similar to useState, reducer is used to deal with more complex state structures such as array and javascript objects or complex logic
 
-### Usage
-1. Import useReducer: <br />
+### Reducer Function with UseState Hook
+```
+import { useState } from "react";
+const [state, setState] = useState(initialValue);
+
+const reducer = (state, action) => {
+  switch (action) {
+    case "increase":
+      return state + 1;
+      break;
+    case "decrease":
+      return state - 1;
+      break;
+    case "reset":
+      return 0
+      break;
+    default:
+      return state;
+  }
+}
+
+<button onClick={setState(reducer(state, "increase"))}>Increase</button>
+<button onClick={setState(reducer(state, "decrease"))}>Decrease</button>
+<button onClick={setState(reducer(state, "reset"))}>Reset</button>
+```
+
+### UseReducer Hook
 ```
 import { useReducer } from "react";
+const [state, dispatch] = useReducer(reducer, initialValue);
+
+const reducer = (state, action) => {
+  switch (action.type) {
+    case "increase":
+      return state + action.value;
+      break;
+    case "decrease":
+      return state - action.value;
+      break;
+    case "reset":
+      return action.value
+      break;
+    default:
+      return state;
+  }
+}
+
+return (
+  <button onClick={dispatch({type: "increase", value: 1})}>Increase</button>
+  <button onClick={dispatch({type: "decrease", value: 1})}>Decrease</button>
+  <button onClick={dispatch({type: "reset", value: 0})}>Reset</button>
+);
 ```
-2. Set up the reducer function: <br />
-3. Set up useReducer: state, dispatcher
-4. Call dispatcher: dispatcher({type: "typeName"}, payload)
+
+## React Router
+
+### React Router 5
+1. Install router: <br />
+```
+npm i react-router-dom@5
+```
+2. Set up router in index.js:
+```
+import ReactDOM from "react-dom";
+
+import "./index.css";
+import App from "./App";
+import { BrowserRouter } from "react-router-dom";
+
+ReactDOM.render(
+  <BrowserRouter>
+    <App />
+  </BrowserRouter>,
+  document.getElementById("root")
+);
+```
+
