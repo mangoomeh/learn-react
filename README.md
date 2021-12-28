@@ -12,6 +12,7 @@
 8. [HTTP-Requests](#http-requests)
 9. [UseContext](#context)
 10. [Reducer](#reducer)
+11. [ReactRouter](#react-router)
 
 ## About
 
@@ -262,13 +263,14 @@ const ChildComponent = () => {
 }
 ```
 
-
 ## Reducer
 
 ### About
+
 Similar to useState, reducer is used to deal with more complex state structures such as array and javascript objects or complex logic
 
 ### Reducer Function with UseState Hook
+
 ```
 import { useState } from "react";
 const [state, setState] = useState(initialValue);
@@ -295,6 +297,7 @@ const reducer = (state, action) => {
 ```
 
 ### UseReducer Hook
+
 ```
 import { useReducer } from "react";
 const [state, dispatch] = useReducer(reducer, initialValue);
@@ -325,11 +328,15 @@ return (
 ## React Router
 
 ### React Router 5
-1. Install router: <br />
+
+1. Install router:
+
 ```
 npm i react-router-dom@5
 ```
+
 2. Set up router in index.js:
+
 ```
 import ReactDOM from "react-dom";
 
@@ -345,3 +352,53 @@ ReactDOM.render(
 );
 ```
 
+3. Set up routes in your component:
+
+- import Route
+- import Pages
+- set route paths to wrap each page
+
+```
+import React from "react";
+import { Route } from "react-router-dom";
+import Main from "./pages/Main";
+import PageOne from "./pages/PageOne";
+import PageThree from "./pages/PageThree";
+import PageTwo from "./pages/PageTwo";
+
+function App() {
+  return (
+    <div className="container">
+      <Route exact path="/">
+        <Main />
+      </Route>
+      <Route path="/page-one">
+        <PageOne></PageOne>
+      </Route>
+      <Route path="/page-two">
+        <PageTwo></PageTwo>
+      </Route>
+      <Route path="/page-three">
+        <PageThree></PageThree>
+      </Route>
+    </div>
+  );
+}
+
+export default App;
+```
+
+4. Use links to link to your pages
+
+```
+import { Link } from "react-router-dom";
+
+<Link to="/">Main</Link>
+<Link to="/page-one">Page One</Link>
+<Link to="/page-two">Page Two</Link>
+<Link to="/page-three">Page Three</Link>
+```
+
+### Some notes
+- React router dom 5 use greedy search for path
+- To fix the issue where main page always appears is to use exact keyword as seen in "3. Set up routes"
