@@ -396,15 +396,15 @@ function App() {
 export default App;
 ```
 
-4. Use NavLinks to NavLink to your pages
+4. Use links to link to your pages
 
 ```
-import { NavLink } from "react-router-dom";
+import { Link } from "react-router-dom";
 
-<NavLink to="/">Main</NavLink>
-<NavLink to="/page-one">Page One</NavLink>
-<NavLink to="/page-two">Page Two</NavLink>
-<NavLink to="/page-three">Page Three</NavLink>
+<Link to="/">Main</Link>
+<Link to="/page-one">Page One</Link>
+<Link to="/page-two">Page Two</Link>
+<Link to="/page-three">Page Three</Link>
 ```
 
 ### Some notes
@@ -456,9 +456,9 @@ export default App;
 
 ```
 
-- Adding links:
+- Use NavLinks to link to pages:
 ```
-import { NavNavLink } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 
 <NavLink to="/">Main</NavLink>
 <NavLink to="/page-one">Page One</NavLink>
@@ -472,5 +472,5 @@ import { NavNavLink } from "react-router-dom";
 - No need for Switch
 - No need for exact keyword
 - Wrap all route in `<Routes>`
-- NavNavLink instead of NavLink
+- NavLink instead of Link
 - Navigate instead of redirect
