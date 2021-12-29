@@ -360,7 +360,9 @@ ReactDOM.render(
 
 ```
 import React from "react";
-import { Route } from "react-router-dom";
+import { Route, Redirect, Switch } from "react-router-dom";
+import NavBar from "./components/NavBar";
+import Details from "./pages/Details";
 import Main from "./pages/Main";
 import PageOne from "./pages/PageOne";
 import PageThree from "./pages/PageThree";
@@ -369,18 +371,24 @@ import PageTwo from "./pages/PageTwo";
 function App() {
   return (
     <div className="container">
-      <Route exact path="/">
-        <Main />
-      </Route>
-      <Route path="/page-one">
-        <PageOne></PageOne>
-      </Route>
-      <Route path="/page-two">
-        <PageTwo></PageTwo>
-      </Route>
-      <Route path="/page-three">
-        <PageThree></PageThree>
-      </Route>
+      <NavBar />
+      <Switch>
+        <Route exact path="/">
+          <Redirect to="/page-one" />
+        </Route>
+        <Route exact path="/page-one">
+          <PageOne></PageOne>
+        </Route>
+        <Route path="/page-two">
+          <PageTwo></PageTwo>
+        </Route>
+        <Route path="/page-one/:item">
+          <Details />
+        </Route>
+        <Route path="/page-three">
+          <PageThree></PageThree>
+        </Route>
+      </Switch>
     </div>
   );
 }
@@ -388,15 +396,15 @@ function App() {
 export default App;
 ```
 
-4. Use links to link to your pages
+4. Use NavLinks to NavLink to your pages
 
 ```
-import { Link } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 
-<Link to="/">Main</Link>
-<Link to="/page-one">Page One</Link>
-<Link to="/page-two">Page Two</Link>
-<Link to="/page-three">Page Three</Link>
+<NavLink to="/">Main</NavLink>
+<NavLink to="/page-one">Page One</NavLink>
+<NavLink to="/page-two">Page Two</NavLink>
+<NavLink to="/page-three">Page Three</NavLink>
 ```
 
 ### Some notes
@@ -419,14 +427,50 @@ import { Switch } from "react-router-dom";
 ```
 
 ### React Router 6
+
 - Install latest react router:
+
 ```
 npm i react-router-dom
 ```
+
+- Example:
+
+```
+const App = () => {
+  return (
+    <div className="container">
+      <NavBar />
+      <Routes>
+        <Route path="/" element={<Navigate replace to="/page-one" />} />
+        <Route path="/page-one" element={<PageOne />} />
+        <Route path="/page-two" element={<PageTwo />} />
+        <Route path="/page-one/:item" element={<Details />} />
+        <Route path="/page-three" element={<PageThree />} />
+      </Routes>
+    </div>
+  );
+}
+
+export default App;
+
+```
+
+- Adding links:
+```
+import { NavNavLink } from "react-router-dom";
+
+<NavLink to="/">Main</NavLink>
+<NavLink to="/page-one">Page One</NavLink>
+<NavLink to="/page-two">Page Two</NavLink>
+<NavLink to="/page-three">Page Three</NavLink>
+```
+
 #### Notes about React Router 6
+
 - Pretty new, might not be implemented in many companies
 - No need for Switch
 - No need for exact keyword
 - Wrap all route in `<Routes>`
-- NavLink
-
+- NavNavLink instead of NavLink
+- Navigate instead of redirect
