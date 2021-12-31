@@ -13,6 +13,8 @@
 9. [UseContext](#context)
 10. [Reducer](#reducer)
 11. [ReactRouter](#react-router)
+12. [Redux](#redux)
+13. [Testing](#testing)
 
 ## About
 
@@ -457,6 +459,7 @@ export default App;
 ```
 
 - Use NavLinks to link to pages:
+
 ```
 import { NavLink } from "react-router-dom";
 
@@ -466,7 +469,7 @@ import { NavLink } from "react-router-dom";
 <NavLink to="/page-three">Page Three</NavLink>
 ```
 
-#### Notes about React Router 6
+### Notes about React Router 6
 
 - Pretty new, might not be implemented in many companies
 - No need for Switch
@@ -474,3 +477,98 @@ import { NavLink } from "react-router-dom";
 - Wrap all route in `<Routes>`
 - NavLink instead of Link
 - Navigate instead of redirect
+
+## Redux
+
+### Redux Toolkit
+
+1. Install Redux Toolkit
+
+```
+npm install @reduxjs/toolkit
+```
+
+2. Create Slice Reducers and Actions AKA `createSlice`
+
+- import `createSlice`
+- "mutating" logic can be used in `createSlice`
+- choose to create "selector" functions
+
+```
+import { createSlice } from "@reduxjs/toolkit";
+
+const counterSlice = createSlice({
+  name: "counter",
+  initialState: {
+    value: 0
+  },
+  reducers: {
+    increment: state => {
+      state.value += 1
+    },
+    decrement: state => {
+      state.value -= 1
+    },
+    incrementByAmount: (state, action) => {
+      state.value += action.payload
+    }
+  }
+})
+
+export const { increment, decrement, incrementByAmount } = counterSlice.actions;
+export default counterSlice.reducer;
+```
+
+3. Create Redux Store AKA `configureStore`
+
+```
+import { configureStore } from "@reduxjs/toolkit";
+import counterReducer from "../features/counter/counterSlice"
+
+const store = configureStore({
+  reducer: {
+    counter: counterReducer,
+  },
+});
+
+export default store;
+```
+
+4. Create Component
+
+- Read data with `useSelector`
+- Change store state using `useDispatch`
+
+```
+import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { decrement, increment, incrementByAmount } from "./counterSlice";
+
+const myComponent = () => {
+  const dispatch = useDispatch();
+  const count = useSelector((state) => state.value);
+
+  return (
+    <>
+      <div>Current value: {count}</div>
+      <button onClick={() => dispatch(increment())}>+</>
+      <button onClick={() => dispatch(decrement())}>-</>
+    </>
+  )
+}
+```
+
+5. Provide the Store
+
+```
+import ReactDOM from "react-dom"
+import React from "react"
+import { Provider } from "react-redux"
+
+ReactDOM.render(
+  <Provider store={store}>
+    <App />
+  </Provider>,
+  document.getElementById('root')
+)
+```
