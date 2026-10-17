@@ -1,5 +1,7 @@
 # React
 
+> **New:** [`deliberate/`](./deliberate) is a learning app built with React that covers software engineering, critical thinking and decision making. It uses the concepts in these notes (useReducer, useContext, useEffect, React Router). See its [README](./deliberate/README.md).
+
 ## Table of contents
 
 1. [About](#about)
