@@ -1,0 +1,28 @@
+// True/false statements for calibration practice. The goal isn't knowing the
+// answers; it's learning whether your confidence matches how often you're right.
+export const statements = [
+  { id: 'cal-1', text: 'The Great Wall of China is visible from the Moon with the naked eye.', truth: false, note: 'It is far too narrow. Astronauts report it is hard to see even from low Earth orbit.' },
+  { id: 'cal-2', text: 'Python was first released before Java.', truth: true, note: 'Python 0.9 appeared in 1991; Java was released in 1995.' },
+  { id: 'cal-3', text: 'Light from the Sun takes about 8 minutes to reach Earth.', truth: true, note: 'About 8 minutes 20 seconds on average.' },
+  { id: 'cal-4', text: 'The first version of JavaScript was written in about 10 days.', truth: true, note: 'Brendan Eich wrote the prototype at Netscape in May 1995.' },
+  { id: 'cal-5', text: 'Mount Everest is the tallest mountain on Earth measured from base to peak.', truth: false, note: 'Everest has the highest summit above sea level. Mauna Kea is taller from its base on the ocean floor.' },
+  { id: 'cal-6', text: 'Git was originally created by Linus Torvalds.', truth: true, note: 'He wrote it in 2005 for Linux kernel development.' },
+  { id: 'cal-7', text: 'Humans only use about 10% of their brains.', truth: false, note: 'Brain imaging shows activity throughout the brain; the 10% figure is a myth.' },
+  { id: 'cal-8', text: 'Octopuses have three hearts.', truth: true, note: 'Two pump blood through the gills and one through the rest of the body.' },
+  { id: 'cal-9', text: 'A moth was once found causing a fault inside the Harvard Mark II computer.', truth: true, note: 'In 1947 operators taped it into the logbook as the "first actual case of bug being found".' },
+  { id: 'cal-10', text: 'Australia is wider than the Moon.', truth: true, note: 'Australia is about 4,000 km east to west; the Moon is about 3,475 km across.' },
+  { id: 'cal-11', text: 'A day on Venus (one rotation) is shorter than its year.', truth: false, note: 'Venus takes about 243 Earth days to rotate once but only about 225 to orbit the Sun.' },
+  { id: 'cal-12', text: 'Botanically, bananas are berries.', truth: true, note: 'They develop from a single ovary with seeds inside the flesh.' },
+  { id: 'cal-13', text: 'Botanically, strawberries are berries.', truth: false, note: 'They are "aggregate accessory fruits"; the seeds are on the outside.' },
+  { id: 'cal-14', text: 'HTTP status code 418 means "I\'m a teapot".', truth: true, note: 'It began as an April Fools\' RFC in 1998 and is widely recognised.' },
+  { id: 'cal-15', text: 'SQL was originally developed at IBM.', truth: true, note: 'It began as SEQUEL in IBM research in the 1970s.' },
+  { id: 'cal-16', text: 'There are more possible games of chess than atoms in the observable universe.', truth: true, note: 'Estimates are around 10^120 games versus roughly 10^80 atoms.' },
+  { id: 'cal-17', text: 'Goldfish have a memory span of about three seconds.', truth: false, note: 'Experiments show goldfish can remember things for months.' },
+  { id: 'cal-18', text: 'The Linux kernel is written mostly in C++.', truth: false, note: 'It is written mostly in C, with some assembly and, more recently, Rust.' },
+  { id: 'cal-19', text: 'Sound travels faster in water than in air.', truth: true, note: 'About 1,480 m/s in water versus about 343 m/s in air.' },
+  { id: 'cal-20', text: 'Napoleon was unusually short for his era.', truth: false, note: 'He was around 1.69 m, about average for a Frenchman of his time. The myth partly comes from differing French and British inches.' },
+  { id: 'cal-21', text: 'A day on Mars is less than an hour longer than a day on Earth.', truth: true, note: 'A Martian solar day is about 24 hours 40 minutes.' },
+  { id: 'cal-22', text: 'The Pacific Ocean covers more area than all of Earth\'s land combined.', truth: true, note: 'About 165 million km² versus about 149 million km² of land.' },
+  { id: 'cal-23', text: 'Old church windows are thicker at the bottom because glass slowly flows over centuries.', truth: false, note: 'Glass doesn\'t flow measurably at room temperature. Uneven thickness came from how panes were made and installed.' },
+  { id: 'cal-24', text: 'Lightning never strikes the same place twice.', truth: false, note: 'Tall structures are hit repeatedly. The Empire State Building is struck around 20 times a year.' },
+]
