@@ -13,7 +13,6 @@ const MIN_FOR_PRACTICE = 2
 export const wordCount = (text) => text.split(/\s+/).filter(Boolean).length
 
 export function estimateMinutes(lesson) {
-  if (!lesson.ideas) return lesson.minutes // content not yet split into bite-sized lessons
   const raw =
     wordCount(lesson.body) / READ_WPM +
     lesson.ideas.length * MIN_PER_IDEA +

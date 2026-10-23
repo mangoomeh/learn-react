@@ -1,6 +1,6 @@
 import { unitsFrom } from '../units.js'
 import { lessons } from './lessons.js'
-import { articles, sections } from './on-the-job.js'
+import { sections } from './on-the-job/index.js'
 import { drills } from './drills.js'
 
 export default {
@@ -18,7 +18,7 @@ export default {
       blurb: s.blurb,
       group: 'On the job',
       elective: true,
-      lessons: articles.filter((a) => a.section === s.id),
+      lessons: s.lessons,
     })),
   ],
   drills,

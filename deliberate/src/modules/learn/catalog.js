@@ -3,8 +3,7 @@ import { estimateMinutes } from '../../subjects/size.js'
 import { isStarted } from './slice'
 
 // "3 ideas · ~9 min"
-export const lessonSize = (lesson) =>
-  lesson.ideas ? `${lesson.ideas.length} idea${lesson.ideas.length === 1 ? '' : 's'} · ~${lesson.minutes} min` : `${lesson.minutes} min`
+export const lessonSize = (lesson) => `${lesson.ideas.length} idea${lesson.ideas.length === 1 ? '' : 's'} · ~${lesson.minutes} min`
 
 // Every lesson in the library, flattened, with where it lives.
 export const allLessons = subjects.flatMap((s) =>

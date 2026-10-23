@@ -163,16 +163,14 @@ function LessonView({ lesson }) {
         </p>
       )}
 
-      {lesson.ideas && (
-        <section className="ideas" aria-labelledby="ideas-h">
-          <h2 id="ideas-h" className="eyebrow">In this lesson</h2>
-          <ol>
-            {lesson.ideas.map((idea) => (
-              <li key={idea}><Inline text={idea} /></li>
-            ))}
-          </ol>
-        </section>
-      )}
+      <section className="ideas" aria-labelledby="ideas-h">
+        <h2 id="ideas-h" className="eyebrow">In this lesson</h2>
+        <ol>
+          {lesson.ideas.map((idea) => (
+            <li key={idea}><Inline text={idea} /></li>
+          ))}
+        </ol>
+      </section>
 
       <Markdown source={lesson.body} />
 

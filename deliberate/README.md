@@ -9,7 +9,7 @@ Each day the app gives you four short "reps":
 3. **Solve a daily drill.** Spot fallacies, name biases, read statistics, reason about code, make Fermi estimates and work through decision scenarios.
 4. **Reflect.** A rotating journal prompt. Lesson practice answers are saved to the journal too.
 
-**The library** (Learn tab) holds subjects. Each subject has units of short lessons, every lesson with a quiz and flashcards. Software Engineering also has optional "On the job" units: 18 practical articles on things you meet at work but rarely learn in school (health checks, heartbeats, cron, background workers, retries, idempotency, observability, deploys, migrations, rate limiting, time zones and more). You can search across every lesson.
+**The library** (Learn tab) holds subjects. Each subject has units of bite-sized lessons: at most 3 ideas each and about 8–11 minutes, with a quiz, flashcards and usually a practice exercise. Each lesson shows its size ("3 ideas · ~11 min") and what it covers. If you stop partway, your quiz answers, notes and place on the page are saved, and the lesson shows as "In progress". Software Engineering also has optional "On the job" units: 36 practical lessons on things you meet at work but rarely learn in school (health checks, heartbeats, cron, background workers, retries, idempotency, observability, deploys, migrations, rate limiting, time zones and more). You can search across every lesson.
 
 Adding a subject means adding a content folder; see [`src/subjects/README.md`](./src/subjects/README.md).
 
