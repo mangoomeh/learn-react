@@ -9,6 +9,8 @@ Each day the app gives you four short "reps":
 3. **Solve a daily drill.** Spot fallacies, name biases, read statistics, reason about code, make Fermi estimates and work through decision scenarios.
 4. **Reflect.** A rotating journal prompt. Lesson practice answers are saved to the journal too.
 
+**Field Guide** (the Guide tab): 18 practical articles on things you meet on the job but rarely learn in school, grouped into keeping services alive (health checks, heartbeats, graceful shutdown, retries and backoff, idempotency), background work (jobs and queues, cron and scheduled tasks, background services, webhooks), observability (logs, metrics, traces, alerting and incidents), shipping (config and secrets, feature flags, migrations, deployments) and APIs (rate limiting, pagination, time zones). Marking an article as read adds its flashcards to your review deck.
+
 Decision tools:
 
 - **Decision journal.** Log a decision with a checkable prediction and a confidence %, then review it later. Process quality is scored separately from the outcome.
@@ -58,11 +60,11 @@ This app uses the same concepts as the notes in the repo's main README:
 
 ```
 src/
-  data/        lesson content, drills, calibration statements
+  data/        lesson content, Field Guide articles, drills, calibration statements
   lib/         dates & streaks, spaced repetition, XP/levels
   store/       ProgressContext (reducer + persistence)
   components/  Layout, Markdown renderer, Heatmap, small UI pieces
-  pages/       Today, Learn, Lesson, Review, Drills, Journal, Decide/*, Stats
+  pages/       Today, Learn, Lesson, Guide, Article, Review, Drills, Journal, Decide/*, Stats
 ```
 
 To add a lesson, append an object to a track in `src/data/*.js`. Its flashcards join the review deck automatically once the lesson is completed.

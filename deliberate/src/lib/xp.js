@@ -7,6 +7,7 @@ export const XP = {
   decision: 15,
   review: 20,
   calibration: 3,
+  article: 15,
 }
 
 // Levels get progressively longer: level n starts at 50 * (n-1)^2 XP.

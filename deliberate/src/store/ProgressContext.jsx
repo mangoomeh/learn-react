@@ -15,6 +15,7 @@ const initialState = {
   reflections: [], // [{ id, date, prompt, text, source }]
   decisions: [], // [{ id, date, title, options, choice, reasoning, expected, confidence, reversible, reviewOn, outcome? }]
   calibration: [], // [{ id, date, confidence, correct }] from the calibration quiz
+  guide: {}, // { articleId: { readOn } } for Field Guide articles
 }
 
 function load() {
@@ -97,6 +98,20 @@ function reducer(state, action) {
     }
     case 'deleteDecision':
       return { ...state, decisions: state.decisions.filter((d) => d.id !== action.id) }
+    case 'markArticleRead': {
+      if (state.guide[action.articleId]) return state
+      const cards = { ...state.cards }
+      for (const id of action.cardIds) if (!cards[id]) cards[id] = newCard()
+      return earn(
+        { ...state, cards, guide: { ...state.guide, [action.articleId]: { readOn: dayKey() } } },
+        XP.article,
+      )
+    }
+    case 'markArticleUnread': {
+      const guide = { ...state.guide }
+      delete guide[action.articleId]
+      return { ...state, guide }
+    }
     case 'logCalibration': {
       const entry = { id: action.id, date: dayKey(), confidence: action.confidence, correct: action.correct }
       return earn({ ...state, calibration: [...state.calibration, entry] }, XP.calibration)

@@ -89,6 +89,7 @@ export default function Stats() {
     ['Cards in deck', cards.length],
     ['Cards mature', cards.filter((c) => c.interval >= 21).length],
     ['Drills solved', drills.length],
+    ['Guide articles read', Object.keys(state.guide).length],
     ['Journal entries', state.reflections.length],
     ['Decisions logged', state.decisions.length],
     ['Decisions reviewed', state.decisions.filter((d) => d.outcome).length],

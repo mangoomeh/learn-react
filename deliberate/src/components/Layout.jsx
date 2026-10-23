@@ -8,6 +8,7 @@ import { levelFor } from '../lib/xp'
 const icon = {
   today: 'M4 5h16v15H4zM4 9h16M9 3v4M15 3v4',
   learn: 'M4 5.5C7 4 10 4 12 6c2-2 5-2 8-.5V19c-3-1.5-6-1.5-8 .5-2-2-5-2-8-.5z M12 6v13.5',
+  guide: 'M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18z M15.5 8.5l-2 5-5 2 2-5z',
   review: 'M5 7h11v12H5z M8 4h11v12',
   drills: 'M12 3l2.6 5.6 6 .7-4.5 4.1 1.2 6L12 16.4 6.7 19.4l1.2-6L3.4 9.3l6-.7z',
   decide: 'M12 3v18 M12 7l-7 3 7 3 7-3z M5 10v4 M19 10v4',
@@ -26,6 +27,7 @@ function Icon({ name }) {
 const NAV = [
   { to: '/', label: 'Today', icon: 'today', end: true },
   { to: '/learn', label: 'Learn', icon: 'learn' },
+  { to: '/guide', label: 'Guide', icon: 'guide' },
   { to: '/review', label: 'Review', icon: 'review' },
   { to: '/drills', label: 'Drills', icon: 'drills' },
   { to: '/decide', label: 'Decide', icon: 'decide' },

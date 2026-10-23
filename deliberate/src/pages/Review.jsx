@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useProgress } from '../store/ProgressContext'
-import { cardById, lessonById, trackById } from '../data'
+import { cardById, trackById } from '../data'
 import { dayKey, formatDay } from '../lib/dates'
 import { GRADES, isDue } from '../lib/srs'
 import { PageHeader, TrackTag } from '../components/ui'
@@ -66,7 +66,7 @@ export default function Review() {
       {deckIds.length === 0 ? (
         <div className="empty">
           <h2>Your deck is empty</h2>
-          <p>Each lesson you complete adds its flashcards here.</p>
+          <p>Each lesson you complete, and each Field Guide article you mark as read, adds its flashcards here.</p>
           <Link to="/learn" className="btn btn-primary">Start a lesson</Link>
         </div>
       ) : card ? (
@@ -74,7 +74,7 @@ export default function Review() {
           <button className={`flash ${flipped ? 'is-flipped' : ''}`} onClick={() => setFlipped((f) => !f)} aria-live="polite">
             <span className="flash-meta">
               <TrackTag track={card.trackId}>{trackById[card.trackId].short}</TrackTag>
-              <span className="muted small">{lessonById[card.lessonId].title}</span>
+              <span className="muted small">{card.sourceTitle}</span>
             </span>
             <span className="flash-front"><Inline text={card.front} /></span>
             {flipped ? <span className="flash-back"><Inline text={card.back} /></span> : <span className="muted small">Recall the answer, then tap to reveal</span>}

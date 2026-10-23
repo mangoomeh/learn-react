@@ -8,6 +8,8 @@ import Drills from './pages/Drills'
 import Journal from './pages/Journal'
 import Decide from './pages/Decide'
 import Stats from './pages/Stats'
+import Guide from './pages/Guide'
+import Article from './pages/Article'
 
 export default function App() {
   return (
@@ -16,6 +18,8 @@ export default function App() {
         <Route index element={<Today />} />
         <Route path="learn" element={<Learn />} />
         <Route path="learn/:lessonId" element={<Lesson />} />
+        <Route path="guide" element={<Guide />} />
+        <Route path="guide/:articleId" element={<Article />} />
         <Route path="review" element={<Review />} />
         <Route path="drills" element={<Drills />} />
         <Route path="journal" element={<Journal />} />

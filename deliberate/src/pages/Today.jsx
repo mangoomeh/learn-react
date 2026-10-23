@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom'
 import { useProgress } from '../store/ProgressContext'
 import { nextLesson, tracks, trackById } from '../data'
 import { challenges, reflectionPrompts } from '../data/challenges'
+import { articles } from '../data/guide'
 import { addDays, currentStreak, dayIndex, dayKey, formatDay, parseDay } from '../lib/dates'
 import { isDue } from '../lib/srs'
 import { levelFor, levelName } from '../lib/xp'
@@ -40,6 +41,7 @@ export default function Today() {
   const repsDone = [lessonDoneToday, reviewedToday || dueCards === 0, drillDone, reflectedToday].filter(Boolean).length
   const weekday = parseDay(today).toLocaleDateString(undefined, { weekday: 'long' })
   const prompt = reflectionPrompts[dayIndex(today) % reflectionPrompts.length]
+  const nextArticle = articles.find((a) => !state.guide[a.id])
 
   return (
     <div className="stack-lg">
@@ -92,6 +94,13 @@ export default function Today() {
           <Rep done={drillDone} to="/drills" title="Daily drill" detail={drill.prompt.length > 90 ? drill.prompt.slice(0, 88).trimEnd() + '…' : drill.prompt} action="Solve" />
           <Rep done={reflectedToday} to="/journal" title="Reflect" detail={prompt} action="Write" />
         </ol>
+        {nextArticle && (
+          <p className="field-next small">
+            <span className="muted">Extra reading from the Field Guide:</span>{' '}
+            <Link to={`/guide/${nextArticle.id}`}>{nextArticle.title}</Link>{' '}
+            <span className="muted">· {nextArticle.minutes} min</span>
+          </p>
+        )}
       </section>
 
       {decisionsDue.length > 0 && (

@@ -1,6 +1,7 @@
 import { engineering } from './engineering'
 import { thinking } from './thinking'
 import { decisions } from './decisions'
+import { articles } from './guide'
 
 export const tracks = [engineering, thinking, decisions]
 
@@ -12,9 +13,15 @@ export const lessonById = Object.fromEntries(allLessons.map((l) => [l.id, l]))
 
 export const trackById = Object.fromEntries(tracks.map((t) => [t.id, t]))
 
-export const allCards = allLessons.flatMap((lesson) =>
-  lesson.cards.map((card) => ({ ...card, lessonId: lesson.id, trackId: lesson.trackId })),
-)
+// Field Guide cards are reviewed alongside lesson cards and count as engineering.
+export const allCards = [
+  ...allLessons.flatMap((lesson) =>
+    lesson.cards.map((card) => ({ ...card, sourceTitle: lesson.title, trackId: lesson.trackId })),
+  ),
+  ...articles.flatMap((article) =>
+    article.cards.map((card) => ({ ...card, sourceTitle: `Field Guide · ${article.title}`, trackId: 'engineering' })),
+  ),
+]
 
 export const cardById = Object.fromEntries(allCards.map((c) => [c.id, c]))
 
