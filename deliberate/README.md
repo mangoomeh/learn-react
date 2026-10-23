@@ -46,7 +46,7 @@ npm run build:single # one self-contained HTML file in dist-single/
 
 `.github/workflows/deploy-pages.yml` builds and deploys the app whenever `deliberate/` changes on `main`. You can also run it by hand from the Actions tab.
 
-One-time setup: in the repo go to **Settings → Pages** and set **Source** to **GitHub Actions**. The site is then served at `https://<user>.github.io/learn-react/`. Relative asset paths and hash routing mean no extra base-path config is needed.
+One-time setup: in the repo go to **Settings → Pages** and set **Source** to **GitHub Actions**. The site is then served at `https://<user>.github.io/<repo-name>/` (currently https://mangoomeh.github.io/deliberate/). Relative asset paths and hash routing mean no extra base-path config is needed.
 
 ## How it's built (React concepts used)
 
