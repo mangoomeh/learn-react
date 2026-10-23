@@ -58,11 +58,11 @@ export default function Today() {
             <span className="stat-num">{xpToday}</span>
             <span className="stat-label">XP today</span>
           </div>
-          <div className="stat stat-wide">
+          <Link to="/stats" className="stat stat-wide stat-link">
             <span className="stat-num">L{level}</span>
-            <span className="stat-label">{levelName(level)} · {toNext} XP to next</span>
+            <span className="stat-label">{levelName(level)} · {toNext} XP to next · <span className="stat-more">Stats →</span></span>
             <ProgressBar value={progress} label="Level progress" />
-          </div>
+          </Link>
         </div>
       </header>
 

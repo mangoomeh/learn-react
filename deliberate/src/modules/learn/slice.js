@@ -18,5 +18,4 @@ export const slice = {
         throw new Error(`Unknown action: ${action.type}`)
     }
   },
-  fromV1: (old) => ({ lessons: old.lessons ?? {} }),
 }

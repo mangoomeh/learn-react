@@ -16,7 +16,6 @@ export const coreSlice = {
         throw new Error(`Unknown action: ${action.type}`)
     }
   },
-  fromV1: (old) => ({ xp: old.xp ?? 0, activity: old.activity ?? {} }),
 }
 
 // Modules award XP by including this in the actions they dispatch.

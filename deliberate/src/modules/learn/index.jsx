@@ -13,7 +13,7 @@ export default {
     { path: 'learn', Component: Learn },
     { path: 'learn/:lessonId', Component: Lesson },
   ],
-  nav: { to: '/learn', label: 'Learn', icon: 'M4 5.5C7 4 10 4 12 6c2-2 5-2 8-.5V19c-3-1.5-6-1.5-8 .5-2-2-5-2-8-.5z M12 6v13.5' },
+  nav: { to: '/learn', label: 'Lessons' },
   cards: allLessons.flatMap((l) => l.cards.map((c) => ({ ...c, source: l.title, track: l.trackId }))),
   today: {
     rep(s, { today }) {

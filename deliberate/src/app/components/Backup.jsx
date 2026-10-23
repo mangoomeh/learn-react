@@ -3,14 +3,13 @@ import { useDispatch, useWholeState } from '../../core/store/ProgressStore'
 import { isBackup } from '../../core/store/persistence'
 
 // Export, restore and reset cover the whole store, so they live in the app shell.
-// Restore accepts both current backups and ones exported before modules had their own state.
 export default function Backup() {
   const state = useWholeState()
   const dispatch = useDispatch()
   const [mode, setMode] = useState(null) // 'export' | 'import' | 'reset'
   const [text, setText] = useState('')
   const [message, setMessage] = useState('')
-  const json = JSON.stringify({ version: 2, ...state })
+  const json = JSON.stringify(state)
 
   async function copy() {
     try {

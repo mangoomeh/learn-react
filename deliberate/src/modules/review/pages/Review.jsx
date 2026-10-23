@@ -59,7 +59,7 @@ export default function Review() {
 
   return (
     <div className="stack-lg">
-      <PageHeader eyebrow="Spaced repetition" title="Review">
+      <PageHeader eyebrow="Spaced repetition" title="Flashcards">
         Cards come back just before you would forget them. A few minutes a day keeps everything you have learned within reach.
       </PageHeader>
 

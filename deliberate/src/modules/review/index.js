@@ -6,7 +6,7 @@ export default {
   id: 'review',
   slice,
   routes: [{ path: 'review', Component: Review }],
-  nav: { to: '/review', label: 'Review', icon: 'M5 7h11v12H5z M8 4h11v12' },
+  nav: { to: '/review', label: 'Flashcards' },
   badge: (s, { today }) => dueIds(s, today).length,
   today: {
     rep(s, { today }) {

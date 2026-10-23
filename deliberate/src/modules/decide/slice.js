@@ -29,7 +29,6 @@ export const slice = {
         throw new Error(`Unknown action: ${action.type}`)
     }
   },
-  fromV1: (old) => ({ decisions: old.decisions ?? [], calibration: old.calibration ?? [] }),
 }
 
 export const decisionsDue = (s, today = dayKey()) => s.decisions.filter((d) => !d.outcome && d.reviewOn && d.reviewOn <= today)

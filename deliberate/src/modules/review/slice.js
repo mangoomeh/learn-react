@@ -20,7 +20,6 @@ export const slice = {
         throw new Error(`Unknown action: ${action.type}`)
     }
   },
-  fromV1: (old) => ({ cards: old.cards ?? {} }),
 }
 
 export const dueIds = (s, today = dayKey()) => Object.keys(s.cards).filter((id) => isDue(s.cards[id], today))

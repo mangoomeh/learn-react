@@ -7,11 +7,11 @@ import Calibration from './Calibration'
 export default function Decide() {
   return (
     <div className="stack-lg">
-      <PageHeader eyebrow="Decision making" title="Decide">
+      <PageHeader eyebrow="Decision making" title="Decisions">
         Record decisions before you know how they turn out, compare options with explicit trade-offs, and see how well your confidence matches reality.
       </PageHeader>
       <nav className="tabs" aria-label="Decision tools">
-        <NavLink to="/decide" end className="tab">Journal</NavLink>
+        <NavLink to="/decide" end className="tab">Log</NavLink>
         <NavLink to="/decide/matrix" className="tab">Matrix</NavLink>
         <NavLink to="/decide/calibration" className="tab">Calibration</NavLink>
       </nav>

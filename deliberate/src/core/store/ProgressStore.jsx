@@ -3,7 +3,7 @@ import { coreSlice } from './core'
 import { hydrate, loadSaved, save } from './persistence'
 
 // The store knows nothing about individual features. Each module registers a slice
-// ({ initial, reducer, fromV1 }) under its id, and owns the actions prefixed with that id,
+// ({ initial, reducer }) under its id, and owns the actions prefixed with that id,
 // e.g. 'learn/complete'. A dispatched array is applied in order as one update, which is how
 // a module combines its own action with another module's public action (see each api.js).
 function createRootReducer(slices) {

@@ -7,7 +7,7 @@ its `api.js`.
 ```
 src/
   core/      shared building blocks; knows nothing about any module
-    store/   the store, persistence and migration, core XP/activity slice
+    store/   the store, persistence, core XP/activity slice
     lib/     dates, levels
     components/  ui, Markdown, Heatmap
     styles/  design tokens and shared component styles
@@ -36,7 +36,7 @@ The current cross-module dependencies are all through APIs:
 modules/example/
   index.js(x)  the manifest (below): the only file the app imports
   api.js       action creators other modules may use; XP amounts
-  slice.js     this module's saved state: { initial, reducer, fromV1 }
+  slice.js     this module's saved state: { initial, reducer }
   data/        static content
   pages/       route components
   example.css  styles used only by this module
@@ -54,9 +54,6 @@ To touch another module or award XP, dispatch an array. It's applied in order as
 dispatch([{ type: 'learn/complete', ... }, addCards(ids), earn(30)])
 ```
 
-`fromV1(old)` builds the slice from progress saved before modules existed (one flat object).
-New modules can leave it out and start empty.
-
 ### Manifest
 
 ```js
@@ -64,8 +61,8 @@ export default {
   id: 'example',                 // state key and action prefix
   slice,                         // optional
   routes: [{ path: 'example', Component: ExamplePage }],
-  nav: { to: '/example', label: 'Example', icon: '<svg path d>' },
-  badge: (slice, { today }) => 0,                  // optional number on the nav item
+  nav: { to: '/example', label: 'Example' },     // label in its section's switcher
+  badge: (slice, { today }) => 0,                  // optional count, on its section tab and switcher
   cards: [{ id, front, back, source, track }],     // optional flashcards for Review
   today: {                                         // all optional
     rep: (slice, { today }) => ({ title, detail, to, action, done }),
@@ -80,5 +77,7 @@ export default {
 }
 ```
 
-To add a module, create its folder and add it to `src/app/modules.js`. That list's order is
-the order of the nav bar, Today's reps and the Stats figures.
+To add a module, create its folder, add it to `modules` in `src/app/modules.js`, and put its id
+in one of the `sections` there (Learn, Practice, Reflect). The bottom bar shows sections, not
+modules, so it stays short; a section with more than one module gets a switcher at the top of
+the page. The `modules` order is the order of Today's reps and the Stats figures.

@@ -11,7 +11,7 @@ export default function Learn() {
 
   return (
     <div className="stack-lg">
-      <PageHeader eyebrow="Curriculum" title="Learn">
+      <PageHeader eyebrow="Curriculum" title="Lessons">
         Three tracks of short lessons. Each ends with a quiz, a practice exercise, and flashcards that join your review deck.
       </PageHeader>
 

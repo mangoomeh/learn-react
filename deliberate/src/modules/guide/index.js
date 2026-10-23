@@ -11,7 +11,7 @@ export default {
     { path: 'guide', Component: Guide },
     { path: 'guide/:articleId', Component: Article },
   ],
-  nav: { to: '/guide', label: 'Guide', icon: 'M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18z M15.5 8.5l-2 5-5 2 2-5z' },
+  nav: { to: '/guide', label: 'Field Guide' },
   // Field Guide topics are engineering practice, so their cards carry the engineering track.
   cards: articles.flatMap((a) => a.cards.map((c) => ({ ...c, source: `Field Guide · ${a.title}`, track: 'engineering' }))),
   today: {

@@ -7,7 +7,7 @@ export default {
   id: 'journal',
   slice,
   routes: [{ path: 'journal', Component: Journal }],
-  nav: { to: '/journal', label: 'Journal', icon: 'M6 3h10l3 3v15H6z M9 9h7 M9 13h7 M9 17h4' },
+  nav: { to: '/journal', label: 'Journal' },
   today: {
     rep: (s, { today }) => ({
       title: 'Reflect',

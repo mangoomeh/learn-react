@@ -7,7 +7,7 @@ export default {
   id: 'decide',
   slice,
   routes: [{ path: 'decide/*', Component: Decide }],
-  nav: { to: '/decide', label: 'Decide', icon: 'M12 3v18 M12 7l-7 3 7 3 7-3z M5 10v4 M19 10v4' },
+  nav: { to: '/decide', label: 'Decisions' },
   today: {
     notice(s, { today }) {
       const due = decisionsDue(s, today)
