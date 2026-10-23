@@ -1,0 +1,29 @@
+/* ---------- Decide ---------- */
+.decisions { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 14px; }
+.decision { padding: 18px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); display: flex; flex-direction: column; gap: 12px; }
+.decision.is-due { border-color: var(--warn); }
+.dl { display: grid; grid-template-columns: 90px minmax(0, 1fr); gap: 6px 14px; margin: 0; font-size: 0.9375rem; }
+.dl dt { color: var(--muted); font-size: var(--step--1); text-transform: uppercase; letter-spacing: 0.05em; padding-top: 2px; }
+.dl dd { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; }
+.review-form { padding: 14px; background: var(--sunken); border-radius: 8px; }
+
+/* ---------- Matrix ---------- */
+.matrix input { min-width: 120px; }
+.matrix .num-input { width: 64px; min-width: 64px; text-align: center; }
+.totals { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.totals li { display: grid; grid-template-columns: minmax(0, 180px) minmax(0, 1fr) 48px; gap: 12px; align-items: center; }
+.totals-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.totals-bar { height: 14px; background: var(--sunken); border-radius: 4px; overflow: hidden; }
+.totals-bar > span { display: block; height: 100%; background: color-mix(in srgb, var(--decide) 45%, var(--sunken)); border-radius: 4px; }
+.totals li.is-top .totals-bar > span { background: var(--decide); }
+.totals li.is-top .totals-name { font-weight: 650; }
+.totals .num { text-align: right; font-weight: 600; }
+.matrix thead th { white-space: nowrap; }
+
+/* ---------- Calibration ---------- */
+.cal-chart { width: 100%; max-width: 420px; height: auto; }
+.cal-chart .grid { stroke: var(--line); stroke-width: 1; }
+.cal-chart .axis { fill: var(--muted); font-size: 10px; font-family: var(--font-body); }
+.cal-chart .ideal { stroke: var(--muted); stroke-dasharray: 4 4; stroke-width: 1.2; }
+.cal-chart .cal-line { stroke: var(--decide); stroke-width: 2; }
+.cal-chart .cal-dot { fill: var(--decide); stroke: var(--surface); stroke-width: 2; }

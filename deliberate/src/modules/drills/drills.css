@@ -1,0 +1,6 @@
+/* ---------- Drills ---------- */
+.drill { display: flex; flex-direction: column; gap: 14px; padding: 22px; background: var(--surface); border: 1px solid var(--line); border-left: 4px solid var(--t); border-radius: var(--radius); }
+.model-answer { padding: 14px 16px; background: var(--sunken); border-radius: 8px; display: flex; flex-direction: column; gap: 6px; }
+.self-rate { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.drill-next { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.drill-next select { width: auto; }

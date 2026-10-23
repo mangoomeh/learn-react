@@ -48,23 +48,16 @@ npm run build:single # one self-contained HTML file in dist-single/
 
 One-time setup: in the repo go to **Settings → Pages** and set **Source** to **GitHub Actions**. The site is then served at `https://<user>.github.io/<repo-name>/` (currently https://mangoomeh.github.io/deliberate/). Relative asset paths and hash routing mean no extra base-path config is needed.
 
-## How it's built (React concepts used)
+## How it's built
 
-This app uses the same concepts as the notes in the repo's main README:
+The app is split into self-contained **modules** (Learn, Guide, Review, Drills, Decide, Journal), each owning its content, pages, styles and saved state. A small `core` provides the store and shared UI, and the `app` shell assembles the nav, Today and Stats from what each module contributes. See [`src/modules/README.md`](./src/modules/README.md) for the structure, the import rules (checked by `npm run lint`) and how to add a module.
 
-- **useReducer + useContext**: all progress lives in one reducer (`src/store/ProgressContext.jsx`) shared through context.
-- **useEffect**: persists state to localStorage whenever it changes.
-- **React Router**: `HashRouter` with nested routes (`/decide/matrix`, `/decide/calibration`) and URL params (`/learn/:lessonId`).
+React concepts it uses (the same ones as the notes in the repo's main README):
+
+- **useReducer + useContext**: one store (`src/core/store/ProgressStore.jsx`) combines a reducer per module and shares it through context.
+- **useEffect**: saves progress to localStorage whenever it changes.
+- **React Router**: `HashRouter`, with routes contributed by each module, nested routes (`/decide/matrix`) and URL params (`/learn/:lessonId`).
 - **Conditional rendering and lists** throughout the pages.
 - **`key` to reset state**: `<LessonView key={lesson.id}>` clears quiz answers when you move to another lesson.
 
-```
-src/
-  data/        lesson content, Field Guide articles, drills, calibration statements
-  lib/         dates & streaks, spaced repetition, XP/levels
-  store/       ProgressContext (reducer + persistence)
-  components/  Layout, Markdown renderer, Heatmap, small UI pieces
-  pages/       Today, Learn, Lesson, Guide, Article, Review, Drills, Journal, Decide/*, Stats
-```
-
-To add a lesson, append an object to a track in `src/data/*.js`. Its flashcards join the review deck automatically once the lesson is completed.
+To add a lesson, append an object to a track in `src/modules/learn/data/*.js`. Its flashcards join the review deck automatically once the lesson is completed.
