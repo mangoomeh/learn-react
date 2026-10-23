@@ -7,4 +7,5 @@ export const KINDS = {
   design: { label: 'Design trade-off' },
   estimate: { label: 'Fermi estimate' },
   decision: { label: 'Decision scenario' },
+  ai: { label: 'AI in practice' },
 }

@@ -43,6 +43,7 @@ for (const s of subjects) {
         need(c.front && c.back, `${at} card ${c.id}: needs front and back`)
       }
       for (const r of l.related ?? []) need(lessonIds.has(r), `${at}: related lesson "${r}" doesn't exist`)
+      for (const src of l.sources ?? []) need(src.title && /^https:\/\//.test(src.url ?? ''), `${at}: each source needs a title and an https url`)
     }
   }
   for (const d of s.drills ?? []) {

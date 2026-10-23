@@ -65,3 +65,4 @@
 }
 .resume-note .link { color: inherit; }
 @media (max-width: 760px) { .resume-note { bottom: calc(80px + env(safe-area-inset-bottom, 0px)); } }
+.sources { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 4px; color: var(--muted); }

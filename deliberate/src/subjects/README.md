@@ -74,6 +74,7 @@ The content check fails any lesson over the limits and tells you which.
   practice: 'An exercise; the answer is saved to the journal.',
   inTheWild: ['Where you will meet this in real life'],
   related: ['another-lesson-id'],
+  sources: [{ title: 'Where a fact came from', url: 'https://…' }],  // shown at the end; use for researched facts
 }
 ```
 

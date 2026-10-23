@@ -243,6 +243,19 @@ function LessonView({ lesson }) {
         </section>
       )}
 
+      {lesson.sources && (
+        <section className="stack-sm" aria-labelledby="src-h">
+          <h2 id="src-h" className="section-title">Sources</h2>
+          <ul className="sources small">
+            {lesson.sources.map((s) => (
+              <li key={s.url}>
+                <a href={s.url} target="_blank" rel="noreferrer">{s.title}</a>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+
       <footer className="reading-foot">
         <Link to={`/learn/${subject.id}`} className="btn btn-quiet">All {subject.short} lessons</Link>
         {next && (
