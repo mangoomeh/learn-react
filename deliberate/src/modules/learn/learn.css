@@ -54,3 +54,14 @@
 /* Optional extras on a lesson page */
 .wild { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
 .related { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 6px; }
+
+/* ---------- Lesson extras ---------- */
+.ideas { padding: 14px 18px; border-left: 3px solid var(--t); background: var(--surface); border-radius: 0 var(--radius) var(--radius) 0; }
+.ideas ol { margin: 8px 0 0; padding-left: 20px; display: flex; flex-direction: column; gap: 4px; font-weight: 550; }
+.resume-note {
+  position: fixed; z-index: 15; left: 50%; transform: translateX(-50%); bottom: calc(24px + env(safe-area-inset-bottom, 0px));
+  width: max-content; max-width: calc(100% - 32px); padding: 10px 16px; border-radius: 99px;
+  background: var(--ink); color: var(--bg); box-shadow: var(--shadow);
+}
+.resume-note .link { color: inherit; }
+@media (max-width: 760px) { .resume-note { bottom: calc(80px + env(safe-area-inset-bottom, 0px)); } }

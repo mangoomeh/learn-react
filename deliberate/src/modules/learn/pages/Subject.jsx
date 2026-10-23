@@ -3,9 +3,10 @@ import { useSlice } from '../../../core/store/ProgressStore'
 import { ProgressBar } from '../../../core/components/ui'
 import { subjectById } from '../../../subjects/index.js'
 import { lessonsOf, progressOf } from '../catalog'
+import { isStarted } from '../slice'
 import LessonRow from '../components/LessonRow'
 
-function Unit({ unit, subjectId, lessons }) {
+function Unit({ unit, subjectId, lessons, drafts }) {
   const list = lessonsOf(subjectId).filter((l) => l.unitId === unit.id)
   return (
     <section className="unit" aria-labelledby={`u-${unit.id}`}>
@@ -16,7 +17,7 @@ function Unit({ unit, subjectId, lessons }) {
       <ul className="lesson-list">
         {list.map((l) => (
           <li key={l.id}>
-            <LessonRow lesson={l} record={lessons[l.id]} />
+            <LessonRow lesson={l} record={lessons[l.id]} started={isStarted(drafts[l.id])} />
           </li>
         ))}
       </ul>
@@ -26,7 +27,7 @@ function Unit({ unit, subjectId, lessons }) {
 
 export default function Subject() {
   const { subjectId } = useParams()
-  const { lessons } = useSlice('learn')
+  const { lessons, drafts } = useSlice('learn')
   const subject = subjectById[subjectId]
 
   if (!subject) {
@@ -60,7 +61,7 @@ export default function Subject() {
 
       <div className="stack-lg">
         {core.map((u) => (
-          <Unit key={u.id} unit={u} subjectId={subject.id} lessons={lessons} />
+          <Unit key={u.id} unit={u} subjectId={subject.id} lessons={lessons} drafts={drafts} />
         ))}
       </div>
 
@@ -73,7 +74,7 @@ export default function Subject() {
           {subject.units
             .filter((u) => u.elective && u.group === group)
             .map((u) => (
-              <Unit key={u.id} unit={u} subjectId={subject.id} lessons={lessons} />
+              <Unit key={u.id} unit={u} subjectId={subject.id} lessons={lessons} drafts={drafts} />
             ))}
         </section>
       ))}

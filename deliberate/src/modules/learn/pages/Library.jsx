@@ -3,14 +3,17 @@ import { Link } from 'react-router-dom'
 import { useSlice } from '../../../core/store/ProgressStore'
 import { PageHeader, ProgressBar } from '../../../core/components/ui'
 import { subjects, subjectById } from '../../../subjects/index.js'
-import { allLessons, lessonPath, lessonsOf, progressOf } from '../catalog'
+import { allLessons, inProgress, lessonPath, lessonsOf, progressOf } from '../catalog'
+import { isStarted } from '../slice'
 import LessonRow from '../components/LessonRow'
 
 const matches = (lesson, q) => `${lesson.title} ${lesson.summary} ${lesson.body} ${(lesson.inTheWild ?? []).join(' ')}`.toLowerCase().includes(q)
 
-function SubjectCard({ subject, lessons }) {
+function SubjectCard({ subject, lessons, drafts }) {
   const { done, total } = progressOf(subject.id, lessons)
-  const next = lessonsOf(subject.id, { core: true }).find((l) => !lessons[l.id]) ?? lessonsOf(subject.id).find((l) => !lessons[l.id])
+  const subjectDrafts = Object.fromEntries(Object.entries(drafts).filter(([id]) => lessonsOf(subject.id).some((l) => l.id === id)))
+  const started = inProgress(lessons, subjectDrafts)
+  const next = started ?? lessonsOf(subject.id, { core: true }).find((l) => !lessons[l.id]) ?? lessonsOf(subject.id).find((l) => !lessons[l.id])
   return (
     <li className="subject-card" data-subject={subject.id}>
       <Link to={`/learn/${subject.id}`} className="subject-card-title">{subject.title}</Link>
@@ -21,7 +24,7 @@ function SubjectCard({ subject, lessons }) {
       </div>
       {next ? (
         <Link to={lessonPath(next)} className="subject-card-next small">
-          {done === 0 ? 'Start' : 'Continue'}: {next.title} →
+          {done === 0 && !started ? 'Start' : 'Continue'}: {next.title} →
         </Link>
       ) : (
         <span className="good small">✓ Every lesson finished</span>
@@ -31,7 +34,7 @@ function SubjectCard({ subject, lessons }) {
 }
 
 export default function Library() {
-  const { lessons } = useSlice('learn')
+  const { lessons, drafts } = useSlice('learn')
   const [query, setQuery] = useState('')
   const q = query.trim().toLowerCase()
   const results = q ? allLessons.filter((l) => matches(l, q)) : []
@@ -53,7 +56,7 @@ export default function Library() {
           <ul className="lesson-list">
             {results.map((l) => (
               <li key={l.id}>
-                <LessonRow lesson={l} record={lessons[l.id]} label={`${subjectById[l.subjectId].short} · ${l.unitTitle}`} />
+                <LessonRow lesson={l} record={lessons[l.id]} started={isStarted(drafts[l.id])} label={`${subjectById[l.subjectId].short} · ${l.unitTitle}`} />
               </li>
             ))}
           </ul>
@@ -61,7 +64,7 @@ export default function Library() {
       ) : (
         <ul className="subject-grid">
           {subjects.map((s) => (
-            <SubjectCard key={s.id} subject={s} lessons={lessons} />
+            <SubjectCard key={s.id} subject={s} lessons={lessons} drafts={drafts} />
           ))}
         </ul>
       )}

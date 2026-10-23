@@ -1,12 +1,13 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { useDispatch, useSlice } from '../../../core/store/ProgressStore'
 import Markdown, { Inline } from '../../../core/components/Markdown'
 import { SubjectTag } from '../../../core/components/ui'
 import { subjectById } from '../../../subjects/index.js'
 import { addEntry, XP_PER_ENTRY } from '../../journal/api'
-import { lessonById, lessonPath, nextInSubject } from '../catalog'
-import { completeLesson, XP_PER_CORRECT, XP_PER_LESSON } from '../api'
+import { lessonById, lessonPath, lessonSize, nextInSubject } from '../catalog'
+import { completeLesson, saveDraft, XP_PER_CORRECT, XP_PER_LESSON } from '../api'
+import { isStarted } from '../slice'
 
 function Quiz({ quiz, answers, setAnswer }) {
   return (
@@ -48,15 +49,21 @@ function Quiz({ quiz, answers, setAnswer }) {
   )
 }
 
-function Practice({ lesson }) {
+function Practice({ lesson, draftText, onDraft }) {
   const dispatch = useDispatch()
-  const [text, setText] = useState('')
+  const [text, setText] = useState(draftText)
   const [saved, setSaved] = useState(false)
+
+  function change(value) {
+    setText(value)
+    onDraft(value)
+  }
 
   function save(e) {
     e.preventDefault()
     if (!text.trim()) return
     dispatch(addEntry({ prompt: lesson.practice, text: text.trim(), source: lesson.title }))
+    onDraft('')
     setSaved(true)
   }
 
@@ -69,7 +76,7 @@ function Practice({ lesson }) {
       ) : (
         <form onSubmit={save} className="stack-sm">
           <label htmlFor="practice-text" className="sr-only">Your practice notes</label>
-          <textarea id="practice-text" rows="5" value={text} onChange={(e) => setText(e.target.value)} placeholder="Write your answer. It is saved to your journal." />
+          <textarea id="practice-text" rows="5" value={text} onChange={(e) => change(e.target.value)} placeholder="Write your answer. It is saved to your journal." />
           <div>
             <button className="btn" type="submit" disabled={!text.trim()}>Save to journal</button>
           </div>
@@ -79,12 +86,53 @@ function Practice({ lesson }) {
   )
 }
 
-function LessonView({ lesson }) {
-  const { lessons } = useSlice('learn')
+// Saves how far down the page you are (as a fraction), and on opening a lesson you'd
+// started, scrolls back there. Not used for finished lessons.
+function useScrollMemory(lesson, draft, enabled) {
   const dispatch = useDispatch()
-  const [answers, setAnswers] = useState({})
-  const [completedNow, setCompletedNow] = useState(false)
+  const [resumed, setResumed] = useState(false)
+  const lastSave = useRef(0)
+  const start = useRef(enabled && isStarted(draft) ? draft.scroll : 0)
+
+  useEffect(() => {
+    if (start.current > 0.05) {
+      // after the layout's own scroll-to-top on navigation
+      const t = setTimeout(() => {
+        window.scrollTo(0, start.current * (document.documentElement.scrollHeight - window.innerHeight))
+        setResumed(true)
+      }, 50)
+      const hide = setTimeout(() => setResumed(false), 6000)
+      return () => {
+        clearTimeout(t)
+        clearTimeout(hide)
+      }
+    }
+  }, [])
+
+  useEffect(() => {
+    if (!enabled) return
+    function onScroll() {
+      const now = Date.now()
+      if (now - lastSave.current < 500) return
+      lastSave.current = now
+      const max = document.documentElement.scrollHeight - window.innerHeight
+      dispatch(saveDraft(lesson.id, { scroll: max > 0 ? Math.min(1, window.scrollY / max) : 0 }))
+    }
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [enabled, lesson.id, dispatch])
+
+  return [resumed, setResumed]
+}
+
+function LessonView({ lesson }) {
+  const { lessons, drafts } = useSlice('learn')
+  const dispatch = useDispatch()
+  const draft = drafts[lesson.id]
   const record = lessons[lesson.id]
+  const [answers, setAnswers] = useState(() => draft?.answers ?? {})
+  const [completedNow, setCompletedNow] = useState(false)
+  const [resumed, setResumed] = useScrollMemory(lesson, draft, !record && !completedNow)
   const subject = subjectById[lesson.subjectId]
   const allAnswered = Object.keys(answers).length === lesson.quiz.length
   const score = lesson.quiz.filter((q, i) => answers[i] === q.answer).length
@@ -103,10 +151,28 @@ function LessonView({ lesson }) {
         <span aria-hidden="true">/</span> {lesson.group ? `${lesson.group}: ` : ''}{lesson.unitTitle}
       </nav>
       <header className="reading-head">
-        <SubjectTag subject={subject.id}>{lesson.minutes} min read</SubjectTag>
+        <SubjectTag subject={subject.id}>{lessonSize(lesson)}</SubjectTag>
         <h1>{lesson.title}</h1>
         <p className="lede">{lesson.summary}</p>
       </header>
+
+      {resumed && (
+        <p className="resume-note small" role="status">
+          Picked up where you left off.{' '}
+          <button className="link" onClick={() => { window.scrollTo(0, 0); setResumed(false) }}>Back to the top</button>
+        </p>
+      )}
+
+      {lesson.ideas && (
+        <section className="ideas" aria-labelledby="ideas-h">
+          <h2 id="ideas-h" className="eyebrow">In this lesson</h2>
+          <ol>
+            {lesson.ideas.map((idea) => (
+              <li key={idea}><Inline text={idea} /></li>
+            ))}
+          </ol>
+        </section>
+      )}
 
       <Markdown source={lesson.body} />
 
@@ -132,7 +198,15 @@ function LessonView({ lesson }) {
 
       <section className="quiz-section" aria-labelledby="quiz-h">
         <h2 id="quiz-h" className="section-title">Check your understanding</h2>
-        <Quiz quiz={lesson.quiz} answers={answers} setAnswer={(qi, oi) => setAnswers((a) => ({ ...a, [qi]: oi }))} />
+        <Quiz
+          quiz={lesson.quiz}
+          answers={answers}
+          setAnswer={(qi, oi) => {
+            const next = { ...answers, [qi]: oi }
+            setAnswers(next)
+            if (!record) dispatch(saveDraft(lesson.id, { answers: next }))
+          }}
+        />
         <div className="action-bar">
           {completedNow ? (
             <p className="good">
@@ -141,7 +215,7 @@ function LessonView({ lesson }) {
           ) : (
             <>
               <p className="muted">
-                {allAnswered ? `You scored ${score}/${lesson.quiz.length}.` : `Answer all ${lesson.quiz.length} questions to finish.`}{' '}
+                {allAnswered ? `You scored ${score}/${lesson.quiz.length}.` : `Answer all ${lesson.quiz.length} questions to finish. Your answers are saved as you go.`}{' '}
                 {record ? `Best so far: ${record.score}/${record.total}.` : `+${XP_PER_LESSON} XP, +${XP_PER_CORRECT} per correct answer.`}
               </p>
               <button className="btn btn-primary" disabled={!allAnswered} onClick={complete}>
@@ -152,7 +226,9 @@ function LessonView({ lesson }) {
         </div>
       </section>
 
-      {lesson.practice && <Practice lesson={lesson} />}
+      {lesson.practice && (
+        <Practice lesson={lesson} draftText={draft?.practice ?? ''} onDraft={(practice) => dispatch(saveDraft(lesson.id, { practice }))} />
+      )}
 
       {related.length > 0 && (
         <section className="stack-sm" aria-labelledby="rel-h">

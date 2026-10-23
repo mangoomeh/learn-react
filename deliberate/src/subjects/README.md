@@ -47,17 +47,26 @@ as extra reading instead. Units with the same `group` are shown together on the 
 
 ## A lesson
 
+Lessons are **bite-sized**: each one teaches at most 3 ideas and takes about 12 minutes at most,
+so it can be finished in one sitting. If a topic needs more, split it into several lessons in
+the same unit. Give every idea a concrete example; that's what makes it stick.
+
+The time shown to learners is calculated from the lesson (careful reading, about 2 minutes of
+thinking per idea, the quiz and any practice; see `size.js`), so lessons don't state their own.
+The content check fails any lesson over the limits and tells you which.
+
 ```js
 {
   id: 'fin-compound-interest',         // unique across all subjects; also the URL
   unit: 'Foundations',                 // only needed when using unitsFrom
   title: 'Compound interest',
-  minutes: 7,
   summary: 'One sentence shown in lists.',
+  ideas: ['Interest on interest', 'The rule of 72'],  // 1–3, shown as "In this lesson"
+  // Write the body with one section (## heading) per idea, each with an example.
   body: `Markdown-lite: ## headings, paragraphs, - lists, 1. lists, > callouts,
 \`\`\` code blocks \`\`\`, **bold** and \`inline code\`.`,
   takeaways: ['Three to five short points.'],
-  quiz: [
+  quiz: [                              // at least one question per idea
     { q: 'Question?', options: ['A', 'B', 'C', 'D'], answer: 1, why: 'Why B is right.' },
   ],
   cards: [{ id: 'c-fin-ci-1', front: 'Question', back: 'Answer' }],  // ids unique across all subjects

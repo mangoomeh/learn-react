@@ -14,3 +14,7 @@ export function completeLesson(lesson, score, previous) {
     ...(gained ? [earn(gained)] : []),
   ]
 }
+
+// Remember where you are in a lesson (quiz answers, practice notes, scroll position)
+// so you can leave and pick up later.
+export const saveDraft = (lessonId, changes) => ({ type: 'learn/saveDraft', lessonId, changes })

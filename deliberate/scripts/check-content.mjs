@@ -1,5 +1,6 @@
 // Validates every subject in src/subjects/ (see src/subjects/README.md). Run as part of `npm run lint`.
 import { subjects } from '../src/subjects/index.js'
+import { estimateMinutes, MAX_IDEAS, MAX_MINUTES } from '../src/subjects/size.js'
 
 const problems = []
 const seen = new Map()
@@ -23,7 +24,16 @@ for (const s of subjects) {
       const at = `${s.id}/${l.id}`
       unique('lesson', l.id, at)
       for (const f of ['title', 'summary', 'body']) need(l[f], `${at}: missing ${f}`)
-      need(Number.isFinite(l.minutes), `${at}: minutes must be a number`)
+      if (l.ideas) {
+        // Bite-sized: few enough ideas to absorb in one sitting, each one covered by the quiz.
+        need(l.ideas.length >= 1 && l.ideas.length <= MAX_IDEAS, `${at}: has ${l.ideas.length} ideas; split it so each lesson teaches at most ${MAX_IDEAS}`)
+        need(l.minutes === undefined, `${at}: remove "minutes"; lesson time is calculated from the content`)
+        const minutes = estimateMinutes(l)
+        need(minutes <= MAX_MINUTES, `${at}: takes about ${minutes} min; trim it or split it to stay within ${MAX_MINUTES}`)
+        need(l.quiz?.length >= l.ideas.length, `${at}: needs at least one quiz question per idea (${l.ideas.length})`)
+      } else {
+        need(Number.isFinite(l.minutes), `${at}: list its "ideas" (at most ${MAX_IDEAS})`)
+      }
       need(l.takeaways?.length > 0, `${at}: needs takeaways`)
       need(l.quiz?.length > 0, `${at}: needs a quiz`)
       l.quiz?.forEach((q, i) => {

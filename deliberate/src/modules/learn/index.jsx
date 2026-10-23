@@ -1,6 +1,6 @@
 import { subjectById } from '../../subjects/index.js'
 import { slice } from './slice'
-import { allLessons, lessonPath, nextElective, nextLesson } from './catalog'
+import { allLessons, inProgress, lessonPath, lessonSize, nextElective, nextLesson } from './catalog'
 import Library from './pages/Library'
 import Subject from './pages/Subject'
 import Lesson from './pages/Lesson'
@@ -19,20 +19,21 @@ export default {
   cards: allLessons.flatMap((l) => l.cards.map((c) => ({ ...c, source: l.title, subject: l.subjectId }))),
   today: {
     rep(s, { today }) {
-      const lesson = nextLesson(s.lessons)
+      const lesson = nextLesson(s.lessons, s.drafts)
+      const started = lesson && inProgress(s.lessons, s.drafts, { core: true })?.id === lesson.id
       return {
-        title: 'Study one lesson',
+        title: started ? 'Finish your lesson' : 'Study one lesson',
         to: lesson ? lessonPath(lesson) : '/learn',
-        action: 'Start',
+        action: started ? 'Continue' : 'Start',
         done: Object.values(s.lessons).some((l) => l.completedOn === today),
         detail: lesson
-          ? `${subjectById[lesson.subjectId].short} · ${lesson.title} · ${lesson.minutes} min`
+          ? `${subjectById[lesson.subjectId].short} · ${lesson.title} · ${lessonSize(lesson)}`
           : 'You have finished every core lesson. Retake any to sharpen it.',
       }
     },
     extra(s) {
       const next = nextElective(s.lessons)
-      return next && { label: `Extra reading in ${subjectById[next.subjectId].title}:`, title: next.title, to: lessonPath(next), meta: `${next.minutes} min` }
+      return next && { label: `Extra reading in ${subjectById[next.subjectId].title}:`, title: next.title, to: lessonPath(next), meta: lessonSize(next) }
     },
     panel: { title: 'Subjects', render: (s) => <SubjectProgress lessons={s.lessons} /> },
   },
