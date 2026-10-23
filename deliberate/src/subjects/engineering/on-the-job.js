@@ -1,6 +1,6 @@
-// Field Guide: practical, on-the-job topics that rarely appear in a CS curriculum.
-// Articles are read rather than quizzed; marking one as read adds its cards to the review deck.
-export const guideSections = [
+// "On the job": practical topics that rarely appear in a CS curriculum, grouped into sections.
+// Each section becomes an optional unit of the Software Engineering subject.
+export const sections = [
   {
     id: 'reliability',
     title: 'Keeping services alive',
@@ -80,6 +80,26 @@ app.get('/readyz', async (req, res) => {
       'Deep readiness checks on shared dependencies can turn a blip into an outage.',
       'Fast, cheap, short timeouts, and several failures before acting.',
     ],
+    quiz: [
+      {
+        q: 'Your service\'s readiness check fails. What does the platform do?',
+        options: ['Restarts the process', 'Stops sending it traffic but leaves it running', 'Deletes the container image', 'Nothing until liveness fails too'],
+        answer: 1,
+        why: 'Readiness controls traffic. Only a failing liveness check leads to a restart.',
+      },
+      {
+        q: 'Which liveness check is safest?',
+        options: ['Ping the database and fail if it is down', 'Call two downstream services', 'Return 200 as long as the process can respond', 'Run a full end-to-end test'],
+        answer: 2,
+        why: 'Liveness should only fail for problems a restart fixes. If the database is down, restarting your app only adds a restart storm.',
+      },
+      {
+        q: 'Every instance\'s readiness check pings a shared database, which has a 5-second blip. What happens?',
+        options: ['Only one instance is affected', 'Every instance turns unready at once, so the load balancer has nowhere to send traffic', 'Requests queue in the database', 'Nothing; checks ignore short blips'],
+        answer: 1,
+        why: 'A deep check on a shared dependency fails everywhere at the same moment, turning a blip into a full outage.',
+      },
+    ],
     inTheWild: ['Kubernetes livenessProbe / readinessProbe / startupProbe', 'AWS ALB target group health checks', 'Docker HEALTHCHECK', 'Uptime monitors like Pingdom or UptimeRobot'],
     related: ['fg-heartbeats', 'fg-graceful-shutdown', 'fg-deployments'],
     cards: [
@@ -134,6 +154,26 @@ The interval sets how fast you **detect** a failure; the number of missed beats 
       'Ping on start and on success to detect hangs and measure durations.',
       'Declare failure after several missed beats, not one.',
     ],
+    quiz: [
+      {
+        q: 'A nightly backup job silently stopped running a month ago. Which monitoring would have caught it?',
+        options: ['An alert on job errors', 'A health check endpoint', 'A dead man\'s switch that expects a ping every 24 hours', 'CPU monitoring'],
+        answer: 2,
+        why: 'A job that never runs produces no error. Only alerting on a missing ping catches it.',
+      },
+      {
+        q: 'Where in a job should the "success" heartbeat ping go?',
+        options: ['At the very start', 'At the end, after the work succeeds', 'In a separate cron job', 'Anywhere; it doesn\'t matter'],
+        answer: 1,
+        why: 'Pinging at the end means the ping proves the job finished. A start ping only proves it began.',
+      },
+      {
+        q: 'Why do apps send WebSocket ping frames every 20–30 seconds?',
+        options: ['To measure bandwidth', 'Proxies drop idle connections silently, and pings keep them open and detect dead peers', 'Browsers require it', 'To encrypt the connection'],
+        answer: 1,
+        why: 'Without traffic, intermediaries may close the connection and neither side notices until it tries to send.',
+      },
+    ],
     inTheWild: ['Healthchecks.io, Cronitor, Dead Man\'s Snitch', 'WebSocket ping/pong frames', 'Kubernetes node heartbeats and leases', 'etcd / Consul sessions'],
     related: ['fg-scheduled-tasks', 'fg-health-checks', 'fg-alerting'],
     cards: [
@@ -185,6 +225,26 @@ process.on('SIGTERM', async () => {
       'Stop new work, wait for the load balancer, finish in-flight work, clean up, exit.',
       'In containers, make sure your app actually receives the signal.',
       'Long jobs should be resumable or safe to retry.',
+    ],
+    quiz: [
+      {
+        q: 'What happens if your process ignores SIGTERM?',
+        options: ['It keeps running forever', 'After the grace period the platform sends SIGKILL, ending it mid-work', 'The deploy is cancelled', 'The platform retries SIGTERM indefinitely'],
+        answer: 1,
+        why: 'SIGKILL can\'t be caught. Anything unfinished at that point is lost or left half-done.',
+      },
+      {
+        q: 'What should a server do first when it receives SIGTERM?',
+        options: ['Exit immediately', 'Close the database connection', 'Stop accepting new work, for example by failing readiness', 'Flush the logs'],
+        answer: 2,
+        why: 'Stop new work arriving first, then finish what is in flight, then release resources and exit.',
+      },
+      {
+        q: 'Your container starts the app with `sh -c "node app.js"` and always gets killed at shutdown. A likely cause?',
+        options: ['Node can\'t handle signals', 'The shell receives SIGTERM and doesn\'t forward it to the app', 'The grace period is too long', 'The image is too large'],
+        answer: 1,
+        why: 'The shell is PID 1. Use the exec form (CMD ["node", "app.js"]) or a small init like tini.',
+      },
     ],
     inTheWild: ['Kubernetes terminationGracePeriodSeconds and preStop hooks', 'Node\'s server.close()', 'tini / dumb-init in Docker images'],
     related: ['fg-health-checks', 'fg-background-jobs', 'fg-deployments'],
@@ -246,6 +306,26 @@ When a dependency is clearly down, keep failing fast instead of waiting for time
       'Exponential backoff plus jitter avoids the thundering herd.',
       'Retry at one layer; nested retries multiply load.',
     ],
+    quiz: [
+      {
+        q: 'Which error is usually worth retrying?',
+        options: ['400 Bad Request', '404 Not Found', '503 Service Unavailable', '403 Forbidden'],
+        answer: 2,
+        why: '503 is often temporary. The 4xx errors will fail the same way every time.',
+      },
+      {
+        q: 'Why add random jitter to exponential backoff?',
+        options: ['To make retries faster', 'So clients that failed together don\'t retry together in synchronised waves', 'To reduce log volume', 'Jitter is required by HTTP'],
+        answer: 1,
+        why: 'Without jitter, many clients retry at the same instants: the thundering herd.',
+      },
+      {
+        q: 'The browser, the API and the service behind it each retry 3 times. How many requests can one user action cause at the bottom layer?',
+        options: ['3', '9', '27', '81'],
+        answer: 2,
+        why: '3 × 3 × 3 = 27. Nested retries multiply load, which is why you retry at one layer.',
+      },
+    ],
     inTheWild: ['AWS SDK retry modes', 'gRPC retry policies', 'Resilience4j, Polly, opossum (circuit breakers)', 'Retry-After headers'],
     related: ['fg-idempotency', 'fg-rate-limiting', 'fg-background-jobs'],
     cards: [
@@ -295,6 +375,26 @@ By definition GET, PUT and DELETE should be idempotent; POST is not. That's why 
       'Queues and webhooks are at-least-once, so handlers must tolerate duplicates.',
       'Idempotency keys, unique constraints and processed-ID tables prevent double effects.',
       'Prefer absolute updates over increments.',
+    ],
+    quiz: [
+      {
+        q: 'Which operation is idempotent?',
+        options: ['Add $10 to the balance', 'Send a welcome email', 'Set the order status to "shipped"', 'Append a row to a log table'],
+        answer: 2,
+        why: 'Setting a value to the same thing twice has the same effect as once. The others repeat their effect.',
+      },
+      {
+        q: 'A queue promises "at-least-once" delivery. What must your handler tolerate?',
+        options: ['Messages arriving twice', 'Messages never arriving', 'Messages arriving encrypted', 'Nothing special'],
+        answer: 0,
+        why: 'At-least-once means duplicates are possible, so handlers must be idempotent.',
+      },
+      {
+        q: 'A payment POST times out and the client retries. What stops a double charge?',
+        options: ['A longer timeout', 'An idempotency key: the server returns the stored result for a repeated key', 'Retrying faster', 'Using GET instead of POST'],
+        answer: 1,
+        why: 'The first request may have succeeded. The key lets the server recognise the retry and skip the work.',
+      },
     ],
     inTheWild: ['Stripe\'s Idempotency-Key header', 'SQS / Kafka at-least-once delivery', 'Database unique indexes and upserts'],
     related: ['fg-retries', 'fg-webhooks', 'fg-background-jobs'],
@@ -353,6 +453,26 @@ Retry failed jobs with backoff, but cap the attempts. After the last attempt, mo
       'Jobs can run more than once and out of order: make them idempotent.',
       'Cap retries and send failures to a dead-letter queue.',
       'Enqueue after commit (or use an outbox) and pass IDs, not objects.',
+    ],
+    quiz: [
+      {
+        q: 'Why respond "202 Accepted" and send the email from a background job?',
+        options: ['Emails are illegal in requests', 'The user gets a fast response, and the email can retry if the provider is slow or down', 'It uses less memory', 'Background jobs never fail'],
+        answer: 1,
+        why: 'Slow or unreliable work moves out of the request, where it can be retried without making the user wait.',
+      },
+      {
+        q: 'A job takes 10 minutes but the queue\'s visibility timeout is 5 minutes. What happens?',
+        options: ['The job is cancelled', 'The job becomes visible again and a second worker starts it while the first is still running', 'The queue extends the timeout automatically', 'Nothing'],
+        answer: 1,
+        why: 'Unacknowledged jobs reappear after the timeout. Set it above your slowest job or extend the lease while working.',
+      },
+      {
+        q: 'Why enqueue a job only after the database transaction commits?',
+        options: ['Queues are slower than databases', 'Otherwise a worker may run before the row exists, or for a row that gets rolled back', 'It saves money', 'Transactions block queues'],
+        answer: 1,
+        why: 'The worker can be faster than the commit. The outbox pattern makes this robust.',
+      },
     ],
     inTheWild: ['Sidekiq (Ruby), Celery (Python), BullMQ (Node), Hangfire (.NET)', 'AWS SQS, RabbitMQ, Google Pub/Sub, Kafka', 'Postgres-based queues like pg-boss or Oban'],
     related: ['fg-idempotency', 'fg-scheduled-tasks', 'fg-background-services'],
@@ -423,6 +543,26 @@ A schedule decides **when** work starts; a queue handles **doing** it reliably. 
       'Guard against overlapping runs and duplicate schedulers with a lock.',
       'Schedule in UTC; local times break around daylight saving changes.',
       'Process everything due since the last success, and monitor with a heartbeat.',
+    ],
+    quiz: [
+      {
+        q: 'What does the cron expression `30 8 * * 1-5` mean?',
+        options: ['Every 30 minutes from 8 a.m.', '08:30 on weekdays', '08:30 on the 1st to 5th of each month', '30 seconds past 8, daily'],
+        answer: 1,
+        why: 'Minute 30, hour 8, any day of month, any month, days of week 1–5 (Monday to Friday).',
+      },
+      {
+        q: 'A crontab is copied onto each of three web servers. What goes wrong?',
+        options: ['Nothing', 'The job runs three times', 'The job never runs', 'Cron refuses to start'],
+        answer: 1,
+        why: 'Each server runs its own copy. Schedule from one place, or take a lock so only one instance does the work.',
+      },
+      {
+        q: 'Why is a job scheduled for 02:30 local time risky?',
+        options: ['Servers are busy at night', 'On daylight saving changes, 02:30 may be skipped or happen twice', 'Cron can\'t run before 03:00', 'Logs rotate at that time'],
+        answer: 1,
+        why: 'Clocks jumping forward skip 02:30; falling back repeats it. Schedule in UTC unless the rule is truly local.',
+      },
     ],
     inTheWild: ['crontab and systemd timers', 'Kubernetes CronJob (concurrencyPolicy: Forbid)', 'AWS EventBridge Scheduler, Google Cloud Scheduler', 'Sidekiq-cron, Celery beat, node-cron'],
     related: ['fg-heartbeats', 'fg-background-jobs', 'fg-time'],
@@ -496,6 +636,26 @@ Run workers as **separate processes** from your web server, even if they share c
       'Detect "alive but stuck" with progress-based liveness and lag metrics.',
       'Run workers separately from the web app and limit their concurrency.',
     ],
+    quiz: [
+      {
+        q: 'What should restart a background worker when it crashes?',
+        options: ['A developer', 'A supervisor such as systemd, PM2 or Kubernetes', 'The worker itself', 'The database'],
+        answer: 1,
+        why: 'A supervisor watches the process and restarts it, with backoff so a crash loop doesn\'t spin.',
+      },
+      {
+        q: 'A worker is running but has processed nothing for an hour. How should you detect this?',
+        options: ['A liveness signal based on progress, such as the time of the last loop iteration', 'Check that the process exists', 'Watch CPU usage', 'Wait for user complaints'],
+        answer: 0,
+        why: 'A stuck process is still alive. Only a progress-based signal, plus queue lag, shows it has stopped working.',
+      },
+      {
+        q: 'Why use long polling instead of checking the queue every 10 ms?',
+        options: ['Long polling is more secure', 'The worker waits for work to arrive instead of burning CPU and hammering the queue', 'Queues require it', 'It processes jobs in order'],
+        answer: 1,
+        why: 'The queue holds the request open until a job is available or a timeout passes.',
+      },
+    ],
     inTheWild: ['systemd services, supervisord, PM2', 'Kubernetes Deployments for workers', '.NET BackgroundService / IHostedService, Spring @Scheduled', 'Kafka consumer groups'],
     related: ['fg-background-jobs', 'fg-graceful-shutdown', 'fg-observability'],
     cards: [
@@ -543,6 +703,26 @@ Providers can't reach \`localhost\`. Use the provider's CLI to forward events, o
       'Acknowledge fast and process in a background job.',
       'Deduplicate by event ID: providers retry.',
       'Don\'t assume events arrive in order.',
+    ],
+    quiz: [
+      {
+        q: 'How do you check that a webhook really came from the provider?',
+        options: ['Check the sender\'s IP address only', 'Recompute the HMAC signature of the raw body with the shared secret and compare it', 'Look for a User-Agent header', 'Trust it if the JSON parses'],
+        answer: 1,
+        why: 'Your endpoint is public. The signature proves the request was made by someone who knows the secret.',
+      },
+      {
+        q: 'Your webhook handler takes 30 seconds to process an event. What will likely happen?',
+        options: ['Nothing', 'The provider times out and resends the event, so you process it again', 'The provider waits indefinitely', 'The event is lost forever'],
+        answer: 1,
+        why: 'Acknowledge fast with a 2xx, then process in a background job, and dedupe on the event ID.',
+      },
+      {
+        q: '"Subscription updated" arrives before "subscription created". What should you assume?',
+        options: ['The provider is broken', 'Events can arrive out of order; check timestamps or fetch the latest state', 'Drop the first event', 'It will never happen again'],
+        answer: 1,
+        why: 'Webhook delivery order isn\'t guaranteed, especially with retries.',
+      },
     ],
     inTheWild: ['Stripe, GitHub, Slack and Shopify webhooks', 'Stripe CLI / ngrok for local testing', 'Svix and Hookdeck (webhook infrastructure)'],
     related: ['fg-idempotency', 'fg-background-jobs', 'fg-retries'],
@@ -593,6 +773,26 @@ A typical investigation: a **metric** alert fires (error rate up), a **trace** o
       'Metrics: RED for services, USE for resources, latency as percentiles.',
       'Traces show which hop in a request was slow or failing.',
       'Connect all three with shared request and trace IDs.',
+    ],
+    quiz: [
+      {
+        q: 'Which log line is most useful in production?',
+        options: ['"Error!!! something broke"', '{"level":"error","msg":"payment failed","orderId":"o_42","requestId":"r_9"}', '"payment failed for o_42"', 'A full dump of the request, including the card number'],
+        answer: 1,
+        why: 'Structured fields can be searched and filtered, the request ID links related lines, and it contains no secrets.',
+      },
+      {
+        q: 'What are the RED metrics for a service?',
+        options: ['Requests, Errors, Disk', 'Rate, Errors, Duration', 'Reads, Edits, Deletes', 'Retries, Exceptions, Downtime'],
+        answer: 1,
+        why: 'Request rate, error rate and latency (as percentiles) describe how a service is doing for its callers.',
+      },
+      {
+        q: 'A request is slow and passes through five services. Which tool shows which hop is responsible?',
+        options: ['A CPU graph', 'A distributed trace', 'The error log of the first service', 'An uptime check'],
+        answer: 1,
+        why: 'A trace records a timed span for each service the request passes through.',
+      },
     ],
     inTheWild: ['OpenTelemetry (the standard for all three)', 'Prometheus + Grafana, Datadog, New Relic, Honeycomb', 'Loki, Elasticsearch / OpenSearch for logs', 'Jaeger, Tempo for traces'],
     related: ['fg-alerting', 'fg-background-services', 'fg-health-checks'],
@@ -645,6 +845,26 @@ Write up what happened, the impact, the timeline, the contributing causes and th
       'Noisy alerts get ignored. Make every page actionable, with a runbook.',
       'SLOs and error budgets turn reliability into a concrete target.',
       'Mitigate first, then run a blameless post-mortem.',
+    ],
+    quiz: [
+      {
+        q: 'Which alert should wake someone up at 3 a.m.?',
+        options: ['CPU at 85% on one server', 'One pod restarted', 'Checkout error rate above 5% for 5 minutes', 'Disk 60% full'],
+        answer: 2,
+        why: 'Page on symptoms users feel. Causes like CPU belong on dashboards.',
+      },
+      {
+        q: 'A 99.9% monthly availability SLO leaves an error budget of roughly how much full downtime?',
+        options: ['4 minutes', '43 minutes', '7 hours', '3 days'],
+        answer: 1,
+        why: '0.1% of 30 days is about 43 minutes.',
+      },
+      {
+        q: 'During an incident caused by a deploy, what comes first?',
+        options: ['Find the root cause', 'Write the post-mortem', 'Mitigate, for example by rolling back', 'Identify who made the change'],
+        answer: 2,
+        why: 'Stop the impact first. Root cause and a blameless post-mortem come after users are safe.',
+      },
     ],
     inTheWild: ['PagerDuty, Opsgenie, incident.io', 'Grafana / Prometheus Alertmanager, Datadog monitors', 'Google SRE book (free online)', 'Status pages (Statuspage, Instatus)'],
     related: ['fg-observability', 'fg-heartbeats', 'fg-deployments'],
@@ -705,6 +925,26 @@ Variables like \`VITE_API_URL\` or \`NEXT_PUBLIC_*\` are baked into the JavaScri
       'Never commit secrets; rotate any that leak.',
       'Frontend environment variables are public.',
     ],
+    quiz: [
+      {
+        q: 'Why read and validate configuration at startup?',
+        options: ['It makes the app faster', 'A missing setting fails immediately with a clear message, not on the first request in production', 'Environment variables expire', 'It is required by Node'],
+        answer: 1,
+        why: 'Failing fast at boot is far easier to diagnose than a failure hours later.',
+      },
+      {
+        q: 'You committed an API key to a public repo and deleted it in the next commit. What now?',
+        options: ['Nothing; it\'s deleted', 'Make the repo private', 'Rotate the key: revoke it and issue a new one', 'Rewrite git history and carry on'],
+        answer: 2,
+        why: 'Bots scan public repos within minutes. Assume the key was copied.',
+      },
+      {
+        q: 'Is `VITE_STRIPE_SECRET` in a frontend build safe?',
+        options: ['Yes, environment variables are always secret', 'No: frontend variables are compiled into the bundle users download', 'Yes, if the variable name contains SECRET', 'Only in production builds'],
+        answer: 1,
+        why: 'Anything in client-side code is public. Secrets must stay on a server.',
+      },
+    ],
     inTheWild: ['The Twelve-Factor App (12factor.net)', 'dotenv, direnv', 'AWS Secrets Manager, HashiCorp Vault, Doppler, 1Password CLI', 'GitHub Actions secrets and secret scanning'],
     related: ['fg-feature-flags', 'fg-deployments'],
     cards: [
@@ -758,6 +998,26 @@ Every flag doubles the paths through that code. Old flags pile up, nobody rememb
       'Use them for gradual rollouts, kill switches and experiments.',
       'Release flags are temporary: give them an owner and remove them.',
       'Keep rollouts sticky per user and test the "off" path.',
+    ],
+    quiz: [
+      {
+        q: 'What is the main benefit of feature flags?',
+        options: ['They make code faster', 'They separate deploying code from releasing a feature', 'They replace testing', 'They reduce the number of branches in code'],
+        answer: 1,
+        why: 'You can deploy dark, roll out gradually, and turn a feature off instantly.',
+      },
+      {
+        q: 'A new checkout misbehaves after reaching 10% of users. The quickest safe response?',
+        options: ['Emergency deploy', 'Turn the flag off', 'Roll back the database', 'Wait for the next release'],
+        answer: 1,
+        why: 'A flag works as a kill switch: seconds, with no deploy.',
+      },
+      {
+        q: 'What keeps flags from turning into "flag debt"?',
+        options: ['Never removing them', 'Giving each release flag an owner and an expiry, and deleting it once fully rolled out', 'Putting flag checks deep in business logic', 'Only testing the "on" path'],
+        answer: 1,
+        why: 'Every flag doubles the paths through the code until it is removed.',
+      },
     ],
     inTheWild: ['LaunchDarkly, Unleash, Flagsmith, GrowthBook', 'OpenFeature (vendor-neutral standard)', 'Simple DB- or config-backed flags in-house'],
     related: ['fg-deployments', 'fg-config-secrets', 'fg-migrations'],
@@ -814,6 +1074,26 @@ Set a **lock timeout** on migrations so a migration waiting on a lock fails quic
       'Beware operations that lock large tables; index concurrently, backfill in batches.',
       'Never edit applied migrations; plan the rollback first.',
     ],
+    quiz: [
+      {
+        q: 'Why can\'t you rename a column in a single migration during a rolling deploy?',
+        options: ['Databases don\'t support renames', 'Old code still running expects the old name and starts failing', 'Renames lose data', 'Migrations can\'t run during deploys'],
+        answer: 1,
+        why: 'Old and new code run side by side, so the schema must work with both.',
+      },
+      {
+        q: 'What is the first step of expand and contract?',
+        options: ['Drop the old column', 'Add the new column alongside the old one', 'Backfill the data', 'Switch reads to the new column'],
+        answer: 1,
+        why: 'Expand first, so both versions keep working. Dropping the old column comes last.',
+      },
+      {
+        q: 'How should you backfill 50 million rows?',
+        options: ['One big UPDATE', 'In batches of a few thousand rows with short pauses', 'During a planned outage only', 'Recreate the table'],
+        answer: 1,
+        why: 'A single huge update holds locks and bloats logs. Batches keep the database responsive.',
+      },
+    ],
     inTheWild: ['Flyway, Liquibase, Alembic, Prisma Migrate, Rails / Django migrations', 'gh-ost and pt-online-schema-change for MySQL', 'strong_migrations (Rails) and squawk (Postgres linting)'],
     related: ['fg-deployments', 'fg-feature-flags'],
     cards: [
@@ -858,6 +1138,26 @@ Feature flags complement all of these: deploy the code dark, then release the fe
       'Practise rollbacks before you need them.',
       'Code rollbacks don\'t undo destructive migrations.',
       'Small, frequent, automated deploys of a single promoted artifact.',
+    ],
+    quiz: [
+      {
+        q: 'Which strategy sends a small share of traffic to the new version first and expands only if it looks healthy?',
+        options: ['Rolling', 'Blue-green', 'Canary', 'Big bang'],
+        answer: 2,
+        why: 'A canary limits the blast radius while you compare errors and latency.',
+      },
+      {
+        q: 'You roll back the code, but the deploy\'s migration dropped a column. What happens?',
+        options: ['The column comes back', 'The old code may fail because the column is gone', 'The rollback is blocked', 'Nothing; code and schema are independent'],
+        answer: 1,
+        why: 'Code rollbacks don\'t undo destructive migrations. That\'s why migrations expand and contract.',
+      },
+      {
+        q: 'Why "build once, promote the same artifact"?',
+        options: ['It saves disk space', 'Production runs exactly what was tested in staging; only configuration differs', 'Builds are slow', 'It is required by Docker'],
+        answer: 1,
+        why: 'Rebuilding for production can pull different dependencies and produce something untested.',
+      },
     ],
     inTheWild: ['Kubernetes rolling updates, Argo Rollouts, Flagger', 'AWS CodeDeploy, ECS blue/green', 'GitHub Actions / GitLab CI pipelines', 'Vercel / Netlify instant rollbacks'],
     related: ['fg-migrations', 'fg-feature-flags', 'fg-graceful-shutdown'],
@@ -914,6 +1214,26 @@ Most third-party APIs you'll use are rate-limited. Be a good client:
       'Token bucket allows bursts while enforcing an average rate.',
       'Return 429 with Retry-After; count in a shared store like Redis.',
       'As a client, honour limits, back off and batch.',
+    ],
+    quiz: [
+      {
+        q: 'Which algorithm allows short bursts while enforcing an average rate?',
+        options: ['Fixed window', 'Token bucket', 'Round robin', 'First in, first out'],
+        answer: 1,
+        why: 'The bucket holds up to N tokens for a burst and refills at a steady rate.',
+      },
+      {
+        q: 'An API answers 429 with `Retry-After: 30`. What should your client do?',
+        options: ['Retry immediately', 'Retry in a tight loop until it works', 'Wait 30 seconds before retrying', 'Give up permanently'],
+        answer: 2,
+        why: 'The server told you exactly how long to wait. Honour it.',
+      },
+      {
+        q: 'What is the weakness of a fixed-window limit of 100 requests per minute?',
+        options: ['It uses too much memory', 'A client can send 100 at 12:00:59 and 100 more at 12:01:00, double the intended rate', 'It can\'t be stored in Redis', 'It blocks all traffic'],
+        answer: 1,
+        why: 'Counts reset at the window boundary. Sliding windows and token buckets smooth this out.',
+      },
     ],
     inTheWild: ['API gateways (Kong, AWS API Gateway, Cloudflare)', 'nginx limit_req', 'Redis-based limiters', 'GitHub and Stripe API rate limit headers'],
     related: ['fg-retries', 'fg-background-jobs'],
@@ -977,6 +1297,26 @@ Always include a **unique tiebreaker** (like \`id\`) in the sort, or rows with t
       'Cursor pagination is fast and stable; it needs a unique tiebreaker.',
       'Return opaque cursors and a "has more" signal.',
     ],
+    quiz: [
+      {
+        q: 'Why does `OFFSET 1000000` get slow?',
+        options: ['The database must read and discard a million rows first', 'Offsets are not indexed by law', 'It returns more data', 'It doesn\'t; offsets are always fast'],
+        answer: 0,
+        why: 'Offset pagination scans past every skipped row.',
+      },
+      {
+        q: 'New orders arrive while a user pages through offset-paginated results. What can happen?',
+        options: ['Nothing', 'Items shift, so the next page repeats or skips items', 'The query fails', 'The page size changes'],
+        answer: 1,
+        why: 'Inserts push rows down a position. Cursor pagination avoids this.',
+      },
+      {
+        q: 'Why include a unique column like `id` in a cursor\'s sort order?',
+        options: ['For security', 'Rows with the same timestamp could otherwise be skipped or repeated between pages', 'Databases require it', 'To make cursors shorter'],
+        answer: 1,
+        why: 'A unique tiebreaker gives every row an exact position.',
+      },
+    ],
     inTheWild: ['Stripe (starting_after), Slack and GitHub GraphQL APIs use cursors', 'Relay-style GraphQL connections', 'Infinite-scroll feeds'],
     related: ['fg-rate-limiting', 'fg-time'],
     cards: [
@@ -1027,6 +1367,26 @@ When sending times over an API, use **ISO 8601** with an explicit offset: \`2026
       'Store time zone names, not offsets.',
       'Use real date libraries, monotonic clocks for durations, and injectable "now".',
     ],
+    quiz: [
+      {
+        q: 'How should you store the moment an order was placed?',
+        options: ['Local time as text', 'UTC in a proper timestamp type', 'The user\'s time zone offset only', 'Unix time in a string column'],
+        answer: 1,
+        why: 'Store instants in UTC and convert to local time only for display.',
+      },
+      {
+        q: 'Why not store a birthday as a midnight UTC timestamp?',
+        options: ['It uses too much space', 'It is a calendar date, not a moment; converted to local time it can show on the wrong day', 'Timestamps can\'t be before 1970', 'Birthdays are private'],
+        answer: 1,
+        why: 'For users west of UTC, midnight UTC is the previous evening.',
+      },
+      {
+        q: 'Which clock should measure how long a request took?',
+        options: ['The wall clock (Date.now())', 'A monotonic clock (performance.now())', 'The database clock', 'The user\'s clock'],
+        answer: 1,
+        why: 'Wall-clock time can jump when the system clock is corrected. A monotonic clock only moves forward.',
+      },
+    ],
     inTheWild: ['ISO 8601 / RFC 3339', 'The IANA time zone database (tzdata)', 'JavaScript Temporal, date-fns-tz, Luxon', 'Postgres timestamptz'],
     related: ['fg-scheduled-tasks', 'fg-pagination'],
     cards: [
@@ -1037,5 +1397,3 @@ When sending times over an API, use **ISO 8601** with an explicit offset: \`2026
     ],
   },
 ]
-
-export const articleById = Object.fromEntries(articles.map((a) => [a.id, a]))

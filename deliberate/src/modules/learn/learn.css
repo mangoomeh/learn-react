@@ -1,14 +1,34 @@
+/* ---------- Library ---------- */
+.library-search { max-width: 420px; }
+.subject-grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 14px; }
+.subject-card {
+  display: flex; flex-direction: column; gap: 10px; padding: 18px 20px;
+  background: var(--surface); border: 1px solid var(--line); border-top: 4px solid var(--t); border-radius: var(--radius);
+}
+.subject-card-title { font-family: var(--font-display); font-weight: 700; font-size: var(--step-2); color: var(--ink); text-decoration: none; line-height: 1.2; }
+.subject-card-title:hover { color: var(--t); }
+.subject-card-meter { display: flex; flex-direction: column; gap: 6px; margin-top: auto; }
+.subject-card-next { color: var(--t); font-weight: 600; text-decoration: none; }
+.subject-card-next:hover { text-decoration: underline; }
+
+/* ---------- Subject ---------- */
+.subject-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 20px; flex-wrap: wrap; padding-bottom: 16px; border-bottom: 2px solid var(--t); }
+.subject-meter { display: flex; flex-direction: column; gap: 6px; min-width: 200px; }
+.unit { display: flex; flex-direction: column; gap: 6px; }
+.unit-head { display: flex; flex-direction: column; gap: 2px; }
+.unit-head h3 { font-size: var(--step-1); }
+.unit-group { padding-top: 24px; border-top: 1px dashed var(--line); }
+.unit-group-head { display: flex; flex-direction: column; gap: 6px; }
+
 /* ---------- Learn ---------- */
-.track { display: flex; flex-direction: column; gap: 14px; }
-.track-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 20px; flex-wrap: wrap; padding-bottom: 12px; border-bottom: 2px solid var(--t); }
-.track-head h2 { color: var(--ink); }
-.track-meter { display: flex; flex-direction: column; gap: 6px; min-width: 180px; font-size: var(--step--1); color: var(--muted); }
 .lesson-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
+/* One lesson in a list (subject page, search results) */
 .lesson-row {
-  display: grid; grid-template-columns: 120px minmax(0, 1fr) auto; gap: 16px; align-items: baseline;
+  display: grid; grid-template-columns: 160px minmax(0, 1fr) auto; gap: 16px; align-items: baseline;
   padding: 14px 8px; border-bottom: 1px solid var(--line); color: inherit; text-decoration: none; border-radius: 6px;
 }
 .lesson-row:hover { background: var(--surface); }
+.lesson-row.no-label { grid-template-columns: minmax(0, 1fr) auto; }
 .lesson-unit { font-size: 12px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--t); font-weight: 600; }
 .lesson-main { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
 .lesson-title { font-weight: 600; font-size: 1.0625rem; }
@@ -20,8 +40,8 @@
   .lesson-unit { grid-column: 1 / -1; margin-bottom: -10px; }
 }
 
-.track-progress { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 16px; }
-.track-progress li { display: flex; flex-direction: column; gap: 6px; }
+.subject-progress { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 16px; }
+.subject-progress li { display: flex; flex-direction: column; gap: 6px; }
 
 /* ---------- Lesson ---------- */
 .quiz-section .action-bar { margin-top: 20px; }
@@ -30,3 +50,7 @@
 .quiz-q { font-weight: 600; }
 .quiz-q::before { content: counter(q) '. '; color: var(--muted); font-variant-numeric: tabular-nums; }
 .practice { display: flex; flex-direction: column; gap: 10px; }
+
+/* Optional extras on a lesson page */
+.wild { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+.related { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 6px; }

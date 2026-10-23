@@ -19,7 +19,7 @@ export default {
         done: size > 0 && due === 0,
         detail:
           size === 0
-            ? 'Cards unlock as you finish lessons and read Field Guide articles.'
+            ? 'Cards unlock as you finish lessons.'
             : due > 0
               ? `${due} card${due === 1 ? '' : 's'} due`
               : 'Nothing due. Spaced repetition will bring cards back when needed.',

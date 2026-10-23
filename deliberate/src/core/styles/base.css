@@ -9,9 +9,6 @@
   --line: #dce1ea;
   --accent: #3056d3;
   --accent-ink: #ffffff;
-  --eng: #3056d3;
-  --think: #9140a8;
-  --decide: #0e7c86;
   --good: #23804f;
   --bad: #c23b3b;
   --warn: #a86400;
@@ -45,9 +42,6 @@
     --line: #283043;
     --accent: #7c9bff;
     --accent-ink: #0e121b;
-    --eng: #7c9bff;
-    --think: #cc8be0;
-    --decide: #4cc3c9;
     --good: #5bc48a;
     --bad: #f07a7a;
     --warn: #e5a440;
@@ -68,9 +62,6 @@
   --line: #283043;
   --accent: #7c9bff;
   --accent-ink: #0e121b;
-  --eng: #7c9bff;
-  --think: #cc8be0;
-  --decide: #4cc3c9;
   --good: #5bc48a;
   --bad: #f07a7a;
   --warn: #e5a440;
@@ -82,9 +73,7 @@
   color-scheme: dark;
 }
 
-[data-track='engineering'] { --t: var(--eng); }
-[data-track='thinking'] { --t: var(--think); }
-[data-track='decisions'] { --t: var(--decide); }
+/* Subject colour: --t is set per subject by <SubjectColors> from each subject's `color`. */
 
 *, *::before, *::after { box-sizing: border-box; }
 
@@ -186,7 +175,6 @@ input[type='range'] { padding: 0; border: 0; accent-color: var(--accent); backgr
 }
 .tab:hover { color: var(--ink); }
 .tab[aria-selected='true'], .tab.active { background: var(--surface); color: var(--ink); box-shadow: var(--shadow); }
-.tab[data-track][aria-selected='true'] { color: var(--t, var(--ink)); }
 
 .chips { display: flex; gap: 8px; flex-wrap: wrap; }
 .chip { padding: 4px 12px; border-radius: 99px; background: var(--sunken); font-size: var(--step--1); color: var(--muted); }

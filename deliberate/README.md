@@ -4,12 +4,14 @@ A daily practice app for getting better at **software engineering**, **critical 
 
 Each day the app gives you four short "reps":
 
-1. **Study one lesson.** 21 lessons across three tracks, each with a quiz, a practice exercise and flashcards.
+1. **Study one lesson.** Picked from whichever subject you're furthest behind in, so every subject grows together.
 2. **Review flashcards.** Spaced repetition (an SM-2 variant) brings cards back right before you'd forget them.
 3. **Solve a daily drill.** Spot fallacies, name biases, read statistics, reason about code, make Fermi estimates and work through decision scenarios.
 4. **Reflect.** A rotating journal prompt. Lesson practice answers are saved to the journal too.
 
-**Field Guide** (the Guide tab): 18 practical articles on things you meet on the job but rarely learn in school, grouped into keeping services alive (health checks, heartbeats, graceful shutdown, retries and backoff, idempotency), background work (jobs and queues, cron and scheduled tasks, background services, webhooks), observability (logs, metrics, traces, alerting and incidents), shipping (config and secrets, feature flags, migrations, deployments) and APIs (rate limiting, pagination, time zones). Marking an article as read adds its flashcards to your review deck.
+**The library** (Learn tab) holds subjects. Each subject has units of short lessons, every lesson with a quiz and flashcards. Software Engineering also has optional "On the job" units: 18 practical articles on things you meet at work but rarely learn in school (health checks, heartbeats, cron, background workers, retries, idempotency, observability, deploys, migrations, rate limiting, time zones and more). You can search across every lesson.
+
+Adding a subject means adding a content folder; see [`src/subjects/README.md`](./src/subjects/README.md).
 
 Decision tools:
 
@@ -18,19 +20,6 @@ Decision tools:
 - **Calibration.** A chart of stated confidence against actual accuracy, with a Brier score, fed by your reviewed decisions and a true/false practice set.
 
 Progress (XP, levels, streaks, a 12-month activity heatmap) is saved in your browser's localStorage. Use **Stats → Export backup** to move it between devices.
-
-## Tracks
-
-| Software Engineering | Critical Thinking | Decision Making |
-| --- | --- | --- |
-| Readable code | Anatomy of an argument | One-way and two-way doors |
-| Big-O and complexity | Common logical fallacies | Expected value and thinking in bets |
-| Choosing data structures | Cognitive biases | Second-order thinking |
-| Debugging systematically | Evidence and statistics | Pre-mortems and inversion |
-| Testing that pays off | First-principles thinking | Opportunity cost and prioritisation |
-| System design basics | Steelmanning and intellectual humility | Decision journals and calibration |
-| Code review and communication | | Weighted decision matrices |
-| Version control habits | | |
 
 ## Run it
 
@@ -50,14 +39,14 @@ One-time setup: in the repo go to **Settings → Pages** and set **Source** to *
 
 ## How it's built
 
-The app is split into self-contained **modules** (Learn, Guide, Review, Drills, Decide, Journal), each owning its content, pages, styles and saved state. A small `core` provides the store and shared UI, and the `app` shell assembles the nav, Today and Stats from what each module contributes. See [`src/modules/README.md`](./src/modules/README.md) for the structure, the import rules (checked by `npm run lint`) and how to add a module.
+Content lives in `src/subjects/`, one folder per subject. Features are self-contained **modules** (Learn, Review, Drills, Decide, Journal), each owning its pages, styles and saved state. A small `core` provides the store and shared UI, and the `app` shell assembles the nav, Today and Stats from what each module contributes. See [`src/modules/README.md`](./src/modules/README.md) for the structure, the import rules (checked by `npm run lint`) and how to add a module.
 
 React concepts it uses (the same ones as the notes in the repo's main README):
 
 - **useReducer + useContext**: one store (`src/core/store/ProgressStore.jsx`) combines a reducer per module and shares it through context.
 - **useEffect**: saves progress to localStorage whenever it changes.
-- **React Router**: `HashRouter`, with routes contributed by each module, nested routes (`/decide/matrix`) and URL params (`/learn/:lessonId`).
+- **React Router**: `HashRouter`, with routes contributed by each module, nested routes (`/decide/matrix`) and URL params (`/learn/:subjectId/:lessonId`).
 - **Conditional rendering and lists** throughout the pages.
 - **`key` to reset state**: `<LessonView key={lesson.id}>` clears quiz answers when you move to another lesson.
 
-To add a lesson, append an object to a track in `src/modules/learn/data/*.js`. Its flashcards join the review deck automatically once the lesson is completed.
+To add a lesson, append it to a subject's `lessons.js`. `npm run lint` checks the content, and the lesson's flashcards join the review deck once it is completed.

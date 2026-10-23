@@ -2,9 +2,10 @@ import { useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { useDispatch, useSlice } from '../../../core/store/ProgressStore'
 import Markdown, { Inline } from '../../../core/components/Markdown'
-import { TrackTag } from '../../../core/components/ui'
+import { SubjectTag } from '../../../core/components/ui'
+import { subjectById } from '../../../subjects/index.js'
 import { addEntry, XP_PER_ENTRY } from '../../journal/api'
-import { allLessons, lessonById, trackById } from '../data'
+import { lessonById, lessonPath, nextInSubject } from '../catalog'
 import { completeLesson, XP_PER_CORRECT, XP_PER_LESSON } from '../api'
 
 function Quiz({ quiz, answers, setAnswer }) {
@@ -47,39 +48,62 @@ function Quiz({ quiz, answers, setAnswer }) {
   )
 }
 
+function Practice({ lesson }) {
+  const dispatch = useDispatch()
+  const [text, setText] = useState('')
+  const [saved, setSaved] = useState(false)
+
+  function save(e) {
+    e.preventDefault()
+    if (!text.trim()) return
+    dispatch(addEntry({ prompt: lesson.practice, text: text.trim(), source: lesson.title }))
+    setSaved(true)
+  }
+
+  return (
+    <section className="practice" aria-labelledby="pr-h">
+      <h2 id="pr-h" className="section-title">Practice</h2>
+      <p>{lesson.practice}</p>
+      {saved ? (
+        <p className="good">Saved to your journal. +{XP_PER_ENTRY} XP</p>
+      ) : (
+        <form onSubmit={save} className="stack-sm">
+          <label htmlFor="practice-text" className="sr-only">Your practice notes</label>
+          <textarea id="practice-text" rows="5" value={text} onChange={(e) => setText(e.target.value)} placeholder="Write your answer. It is saved to your journal." />
+          <div>
+            <button className="btn" type="submit" disabled={!text.trim()}>Save to journal</button>
+          </div>
+        </form>
+      )}
+    </section>
+  )
+}
+
 function LessonView({ lesson }) {
   const { lessons } = useSlice('learn')
   const dispatch = useDispatch()
   const [answers, setAnswers] = useState({})
-  const [practice, setPractice] = useState('')
-  const [savedPractice, setSavedPractice] = useState(false)
+  const [completedNow, setCompletedNow] = useState(false)
   const record = lessons[lesson.id]
-  const track = trackById[lesson.trackId]
+  const subject = subjectById[lesson.subjectId]
   const allAnswered = Object.keys(answers).length === lesson.quiz.length
   const score = lesson.quiz.filter((q, i) => answers[i] === q.answer).length
-  const index = allLessons.findIndex((l) => l.id === lesson.id)
-  const next = allLessons[index + 1]
-  const [completedNow, setCompletedNow] = useState(false)
+  const next = nextInSubject(lesson)
+  const related = (lesson.related ?? []).map((id) => lessonById[id]).filter(Boolean)
 
   function complete() {
     dispatch(completeLesson(lesson, score, record))
     setCompletedNow(true)
   }
 
-  function savePractice(e) {
-    e.preventDefault()
-    if (!practice.trim()) return
-    dispatch(addEntry({ prompt: lesson.practice, text: practice.trim(), source: lesson.title }))
-    setSavedPractice(true)
-  }
-
   return (
-    <article className="reading" data-track={track.id}>
+    <article className="reading" data-subject={subject.id}>
       <nav className="crumbs small">
-        <Link to={`/learn?track=${track.id}`}>{track.title}</Link> <span aria-hidden="true">/</span> {lesson.unit}
+        <Link to="/learn">Library</Link> <span aria-hidden="true">/</span> <Link to={`/learn/${subject.id}`}>{subject.title}</Link>{' '}
+        <span aria-hidden="true">/</span> {lesson.group ? `${lesson.group}: ` : ''}{lesson.unitTitle}
       </nav>
       <header className="reading-head">
-        <TrackTag track={track.id}>{lesson.minutes} min read</TrackTag>
+        <SubjectTag subject={subject.id}>{lesson.minutes} min read</SubjectTag>
         <h1>{lesson.title}</h1>
         <p className="lede">{lesson.summary}</p>
       </header>
@@ -95,6 +119,17 @@ function LessonView({ lesson }) {
         </ul>
       </section>
 
+      {lesson.inTheWild && (
+        <section className="stack-sm" aria-labelledby="wild-h">
+          <h2 id="wild-h" className="section-title">Where you'll see it</h2>
+          <ul className="wild">
+            {lesson.inTheWild.map((w) => (
+              <li key={w} className="chip">{w}</li>
+            ))}
+          </ul>
+        </section>
+      )}
+
       <section className="quiz-section" aria-labelledby="quiz-h">
         <h2 id="quiz-h" className="section-title">Check your understanding</h2>
         <Quiz quiz={lesson.quiz} answers={answers} setAnswer={(qi, oi) => setAnswers((a) => ({ ...a, [qi]: oi }))} />
@@ -106,9 +141,7 @@ function LessonView({ lesson }) {
           ) : (
             <>
               <p className="muted">
-                {allAnswered
-                  ? `You scored ${score}/${lesson.quiz.length}.`
-                  : `Answer all ${lesson.quiz.length} questions to finish.`}{' '}
+                {allAnswered ? `You scored ${score}/${lesson.quiz.length}.` : `Answer all ${lesson.quiz.length} questions to finish.`}{' '}
                 {record ? `Best so far: ${record.score}/${record.total}.` : `+${XP_PER_LESSON} XP, +${XP_PER_CORRECT} per correct answer.`}
               </p>
               <button className="btn btn-primary" disabled={!allAnswered} onClick={complete}>
@@ -119,26 +152,27 @@ function LessonView({ lesson }) {
         </div>
       </section>
 
-      <section className="practice" aria-labelledby="pr-h">
-        <h2 id="pr-h" className="section-title">Practice</h2>
-        <p>{lesson.practice}</p>
-        {savedPractice ? (
-          <p className="good">Saved to your journal. +{XP_PER_ENTRY} XP</p>
-        ) : (
-          <form onSubmit={savePractice} className="stack-sm">
-            <label htmlFor="practice-text" className="sr-only">Your practice notes</label>
-            <textarea id="practice-text" rows="5" value={practice} onChange={(e) => setPractice(e.target.value)} placeholder="Write your answer. It is saved to your journal." />
-            <div>
-              <button className="btn" type="submit" disabled={!practice.trim()}>Save to journal</button>
-            </div>
-          </form>
-        )}
-      </section>
+      {lesson.practice && <Practice lesson={lesson} />}
+
+      {related.length > 0 && (
+        <section className="stack-sm" aria-labelledby="rel-h">
+          <h2 id="rel-h" className="section-title">Related</h2>
+          <ul className="related">
+            {related.map((r) => (
+              <li key={r.id}>
+                <Link to={lessonPath(r)}>{r.title}</Link>
+                {lessons[r.id] && <span className="good small"> ✓</span>}
+                <span className="muted small"> · {r.summary}</span>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
 
       <footer className="reading-foot">
-        <Link to="/learn" className="btn btn-quiet">All lessons</Link>
+        <Link to={`/learn/${subject.id}`} className="btn btn-quiet">All {subject.short} lessons</Link>
         {next && (
-          <Link to={`/learn/${next.id}`} className="btn">
+          <Link to={lessonPath(next)} className="btn">
             Next: {next.title} →
           </Link>
         )}
@@ -148,16 +182,16 @@ function LessonView({ lesson }) {
 }
 
 export default function Lesson() {
-  const { lessonId } = useParams()
+  const { subjectId, lessonId } = useParams()
   const lesson = lessonById[lessonId]
-  if (!lesson) {
+  if (!lesson || lesson.subjectId !== subjectId) {
     return (
       <div className="stack">
         <h1>Lesson not found</h1>
-        <Link to="/learn">Back to all lessons</Link>
+        <Link to="/learn">Back to the library</Link>
       </div>
     )
   }
-  // key resets quiz state when navigating between lessons
+  // key resets quiz and practice state when navigating between lessons
   return <LessonView key={lesson.id} lesson={lesson} />
 }

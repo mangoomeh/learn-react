@@ -1,10 +1,11 @@
 import { useState } from 'react'
 import { useDispatch, useSlice } from '../../../core/store/ProgressStore'
-import { trackById } from '../../../core/tracks'
+import { subjectById } from '../../../subjects/index.js'
 import { dayKey } from '../../../core/lib/dates'
-import { PageHeader, TrackTag } from '../../../core/components/ui'
+import { PageHeader, SubjectTag } from '../../../core/components/ui'
 import { Inline } from '../../../core/components/Markdown'
-import { KINDS, challenges } from '../data/challenges'
+import { KINDS } from '../kinds'
+import { drills } from '../catalog'
 import { dailyDrill, logDrill, XP_PER_DRILL } from '../api'
 
 function Drill({ drill, onDone, logged }) {
@@ -20,10 +21,10 @@ function Drill({ drill, onDone, logged }) {
   }
 
   return (
-    <article className="drill" data-track={kind.track}>
+    <article className="drill" data-subject={drill.subject}>
       <div className="row-between">
-        <TrackTag track={kind.track}>{kind.label}</TrackTag>
-        <span className="muted small">{trackById[kind.track].short}</span>
+        <SubjectTag subject={drill.subject}>{kind.label}</SubjectTag>
+        <span className="muted small">{subjectById[drill.subject].short}</span>
       </div>
       <p className="prompt-text"><Inline text={drill.prompt} /></p>
       {drill.code && (
@@ -99,7 +100,7 @@ export default function Drills() {
   const everDone = new Set(Object.values(logByDay).flat().map((c) => c.id))
 
   function another() {
-    const pool = challenges.filter((c) => c.id !== current.id && (filter === 'all' || c.kind === filter))
+    const pool = drills.filter((c) => c.id !== current.id && (filter === 'all' || c.kind === filter))
     const fresh = pool.filter((c) => !everDone.has(c.id))
     const from = fresh.length ? fresh : pool
     if (from.length) setCurrent(from[Math.floor(Math.random() * from.length)])
@@ -117,7 +118,7 @@ export default function Drills() {
 
       <div className="chips">
         <span className="chip"><strong className="num">{log.length}</strong> today</span>
-        <span className="chip"><strong className="num">{everDone.size}</strong> of {challenges.length} seen</span>
+        <span className="chip"><strong className="num">{everDone.size}</strong> of {drills.length} seen</span>
         {accuracy !== null && <span className="chip"><strong className="num">{accuracy}%</strong> correct overall</span>}
       </div>
 

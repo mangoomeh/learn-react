@@ -2,9 +2,9 @@ import { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useDispatch, useSlice } from '../../../core/store/ProgressStore'
 import { useModules } from '../../../core/modules'
-import { trackById } from '../../../core/tracks'
+import { subjectById } from '../../../subjects/index.js'
 import { dayKey, formatDay } from '../../../core/lib/dates'
-import { PageHeader, TrackTag } from '../../../core/components/ui'
+import { PageHeader, SubjectTag } from '../../../core/components/ui'
 import { Inline } from '../../../core/components/Markdown'
 import { GRADES, isDue } from '../srs'
 import { gradeCard } from '../api'
@@ -72,14 +72,14 @@ export default function Review() {
       {deckIds.length === 0 ? (
         <div className="empty">
           <h2>Your deck is empty</h2>
-          <p>Each lesson you complete, and each Field Guide article you mark as read, adds its flashcards here.</p>
+          <p>Each lesson you complete adds its flashcards here.</p>
           <Link to="/learn" className="btn btn-primary">Start a lesson</Link>
         </div>
       ) : card ? (
         <div className="flash-wrap">
           <button className={`flash ${flipped ? 'is-flipped' : ''}`} onClick={() => setFlipped((f) => !f)} aria-live="polite">
             <span className="flash-meta">
-              <TrackTag track={card.track}>{trackById[card.track].short}</TrackTag>
+              <SubjectTag subject={card.subject}>{subjectById[card.subject].short}</SubjectTag>
               <span className="muted small">{card.source}</span>
             </span>
             <span className="flash-front"><Inline text={card.front} /></span>

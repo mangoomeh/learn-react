@@ -1,8 +1,10 @@
 # Modules
 
-Every feature of Deliberate is a module in its own folder. A module owns its content, pages,
-styles, saved state and XP rules. Nothing outside the folder reaches into it, except through
-its `api.js`.
+Every feature of Deliberate is a module in its own folder. A module owns its pages, styles,
+saved state and XP rules. Nothing outside the folder reaches into it, except through its `api.js`.
+
+What you learn lives separately, in [`src/subjects/`](../subjects/README.md). Adding a subject
+needs no new module.
 
 ```
 src/
@@ -11,9 +13,10 @@ src/
     lib/     dates, levels
     components/  ui, Markdown, Heatmap
     styles/  design tokens and shared component styles
-    tracks.js, modules.jsx
+    modules.jsx  the module registry context
+  subjects/  content: one folder per subject (lessons, quizzes, cards, drills)
   modules/
-    learn/ guide/ review/ drills/ decide/ journal/
+    learn/ review/ drills/ decide/ journal/
   app/       the shell: registry, routes, nav, Today, Stats, Backup
 ```
 
@@ -21,14 +24,14 @@ src/
 
 These are checked by `npm run lint` (`scripts/check-boundaries.mjs`):
 
-- `core/` never imports from `app/` or `modules/`.
-- A module imports from `core/`, from its own folder, and from another module's `api.js` only.
+- `core/` imports only from `core/`.
+- `subjects/` imports only from `subjects/`. It's content, not code.
+- A module imports from `core/`, `subjects/`, its own folder, and another module's `api.js` only.
 - `app/` may import anything. It's the only place that sees every module.
 
 The current cross-module dependencies are all through APIs:
 
 - `learn` uses `review/api` (adds a lesson's flashcards) and `journal/api` (saves practice answers).
-- `guide` uses `review/api` (adds an article's flashcards).
 
 ## Anatomy of a module
 
@@ -37,7 +40,7 @@ modules/example/
   index.js(x)  the manifest (below): the only file the app imports
   api.js       action creators other modules may use; XP amounts
   slice.js     this module's saved state: { initial, reducer }
-  data/        static content
+  data/        static content that belongs to the feature, not to a subject
   pages/       route components
   example.css  styles used only by this module
 ```
@@ -63,7 +66,7 @@ export default {
   routes: [{ path: 'example', Component: ExamplePage }],
   nav: { to: '/example', label: 'Example' },     // label in its section's switcher
   badge: (slice, { today }) => 0,                  // optional count, on its section tab and switcher
-  cards: [{ id, front, back, source, track }],     // optional flashcards for Review
+  cards: [{ id, front, back, source, subject }],   // optional flashcards for Review
   today: {                                         // all optional
     rep: (slice, { today }) => ({ title, detail, to, action, done }),
     notice: (slice, { today }) => ({ title, items: [{ key, label, to, meta }] }) || null,

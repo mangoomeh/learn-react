@@ -5,6 +5,7 @@ import { useModules } from '../core/modules'
 import { currentStreak, dayKey } from '../core/lib/dates'
 import { levelFor } from '../core/lib/levels'
 import { sections } from './modules'
+import SubjectColors from './SubjectColors'
 
 function Icon({ path }) {
   return (
@@ -45,6 +46,7 @@ export default function Layout() {
 
   return (
     <div className="shell">
+      <SubjectColors />
       <aside className="sidebar">
         <div className="brand">
           <span className="brand-mark" aria-hidden="true">D</span>

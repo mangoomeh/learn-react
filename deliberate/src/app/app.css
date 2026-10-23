@@ -13,7 +13,7 @@
 .brand-mark {
   display: grid; place-items: center; width: 30px; height: 30px; border-radius: 8px;
   font-family: var(--font-display); font-weight: 800; color: var(--accent-ink);
-  background: conic-gradient(from 200deg, var(--eng), var(--think), var(--decide), var(--eng));
+  background: var(--accent);
 }
 .brand-name { font-family: var(--font-display); font-weight: 700; font-size: var(--step-1); letter-spacing: -0.02em; }
 .nav { display: flex; flex-direction: column; gap: 2px; }
@@ -97,7 +97,7 @@
 .figures dt { font-size: var(--step--1); color: var(--muted); }
 .figures dd { margin: 0; font-family: var(--font-display); font-size: var(--step-2); font-weight: 650; }
 
-/* Switcher between the modules of one section (e.g. Lessons · Field Guide) */
+/* Switcher between the modules of one section (e.g. Flashcards · Drills) */
 .subnav { display: flex; gap: 24px; margin-bottom: 28px; border-bottom: 1px solid var(--line); overflow-x: auto; }
 .subnav-link {
   display: inline-flex; align-items: center; gap: 6px; padding: 10px 0; margin-bottom: -1px;

@@ -1,10 +1,10 @@
 import { earn } from '../../core/store/core'
 import { dayIndex, dayKey } from '../../core/lib/dates'
-import { challenges } from './data/challenges'
+import { drills } from './catalog'
 
 export const XP_PER_DRILL = 15
 
-export const dailyDrill = (today = dayKey()) => challenges[dayIndex(today) % challenges.length]
+export const dailyDrill = (today = dayKey()) => drills[dayIndex(today) % drills.length]
 
 // Each drill earns XP once per day.
 export function logDrill(log, id, result, today = dayKey()) {

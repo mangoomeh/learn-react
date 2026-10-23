@@ -47,7 +47,7 @@ export default function Today() {
         <div>
           <p className="eyebrow">{weekday}, {formatDay(today)}</p>
           <h1>{left === 0 ? `All ${reps.length} reps done. Nice work.` : `${left} rep${left === 1 ? '' : 's'} left today`}</h1>
-          <p className="lede">Small daily practice across engineering, thinking and decisions compounds faster than occasional marathons.</p>
+          <p className="lede">A little practice every day compounds faster than occasional marathons.</p>
         </div>
         <div className="today-stats">
           <div className="stat">
