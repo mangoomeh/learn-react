@@ -7,11 +7,14 @@ lessons with quizzes, flashcards for Review, and daily drills.
 To add a subject:
 
 1. Create `src/subjects/<id>/` with an `index.js` like the one below.
-2. Add it to the `subjects` list in `src/subjects/index.js`.
+2. Add it to a category in `src/subjects/index.js`. Categories group subjects under Explore in
+   the library.
 3. Run `npm run lint`. It checks every subject's content (`scripts/check-content.mjs`) and tells
    you exactly what is missing or wrong.
 
 Nothing else changes: the library, Today, Review, Drills and Stats pick the subject up automatically.
+A new subject appears under Explore; people add it to the subjects they're studying from there.
+(`starterSubjectIds` in `src/subjects/index.js` is what someone studies before choosing.)
 Use explicit `.js` extensions in imports here so the content check can load the files with Node.
 
 ## `index.js`

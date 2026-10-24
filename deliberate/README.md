@@ -1,15 +1,24 @@
 # Deliberate
 
-A daily practice app for getting better at **software engineering**, **critical thinking** and **decision making**, in one place.
+A daily practice app for learning the skills that help in work and life, in one place: from how to learn, think and decide, to communication, money, health and software engineering.
 
 Each day the app gives you four short "reps":
 
-1. **Study one lesson.** Picked from whichever subject you're furthest behind in, so every subject grows together.
+1. **Study one lesson.** Picked from whichever of your subjects you're furthest behind in, so they grow together.
 2. **Review flashcards.** Spaced repetition (an SM-2 variant) brings cards back right before you'd forget them.
-3. **Solve a daily drill.** Spot fallacies, name biases, read statistics, reason about code, make Fermi estimates and work through decision scenarios.
+3. **Solve a daily drill.** Short scenarios from your subjects: spot fallacies, read statistics, reason about code, handle a tricky conversation, do the money maths.
 4. **Reflect.** A rotating journal prompt. Lesson practice answers are saved to the journal too.
 
-**The library** (Learn tab) holds subjects: Software Engineering, Critical Thinking, Decision Making and Artificial Intelligence. Each subject has units of bite-sized lessons: at most 3 ideas each and about 8–11 minutes, with a quiz, flashcards and usually a practice exercise. Each lesson shows its size ("3 ideas · ~11 min") and what it covers. If you stop partway, your quiz answers, notes and place on the page are saved, and the lesson shows as "In progress". Software Engineering also has optional "On the job" units: 36 practical lessons on things you meet at work but rarely learn in school (health checks, heartbeats, cron, background workers, retries, idempotency, observability, deploys, migrations, rate limiting, time zones and more). You can search across every lesson. The AI subject was researched against primary sources (October 2026), and its lessons list their sources.
+**The library** (Learn tab) holds 18 subjects in six groups:
+
+- **Learn and think**: How to Learn, Critical Thinking, Decision Making, Statistics and Data.
+- **Get things done**: Focus and Productivity, Habits and Behaviour Change.
+- **Health and wellbeing**: Health Basics, Stress and Emotions.
+- **Work with people**: Communication and Writing, Feedback and Hard Conversations, Negotiation, Leadership and Teamwork.
+- **Money and business**: Personal Finance, Economics Basics, Business Basics.
+- **Career and technology**: Career Growth, Software Engineering, Artificial Intelligence.
+
+You choose the subjects you're studying; Today's lesson, drills and progress come only from those, and the rest wait under Explore. You can open any lesson without adding its subject. Each subject has units of bite-sized lessons: at most 3 ideas each and about 8–11 minutes, with a quiz, flashcards and usually a practice exercise. Each lesson shows its size ("3 ideas · ~11 min") and what it covers. If you stop partway, your quiz answers, notes and place on the page are saved, and the lesson shows as "In progress". Software Engineering also has optional "On the job" units: 36 practical lessons on things you meet at work but rarely learn in school (health checks, heartbeats, cron, background workers, retries, idempotency, observability, deploys, migrations, rate limiting, time zones and more). You can search across every lesson. Subjects added since October 2026 were researched against primary sources (studies, official guidance), and their lessons list those sources; health, stress and money subjects are general education, not professional advice.
 
 Adding a subject means adding a content folder; see [`src/subjects/README.md`](./src/subjects/README.md).
 

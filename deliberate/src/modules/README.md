@@ -9,7 +9,7 @@ needs no new module.
 ```
 src/
   core/      shared building blocks; knows nothing about any module
-    store/   the store, persistence, core XP/activity slice
+    store/   the store, persistence, core slice (XP, activity, subjects you're studying)
     lib/     dates, levels
     components/  ui, Markdown, Heatmap
     styles/  design tokens and shared component styles
@@ -57,6 +57,10 @@ To touch another module or award XP, dispatch an array. It's applied in order as
 dispatch([{ type: 'learn/complete', ... }, addCards(ids), earn(30)])
 ```
 
+The `core` slice is the only state every module may read: total XP, XP per day, and `following`,
+the subjects you're studying (resolve it with `studying()` from `src/subjects/index.js`). Today
+passes the resolved list to every `today` hook as `ctx.studying`.
+
 ### Manifest
 
 ```js
@@ -68,7 +72,7 @@ export default {
   badge: (slice, { today }) => 0,                  // optional count, on its section tab and switcher
   cards: [{ id, front, back, source, subject }],   // optional flashcards for Review
   today: {                                         // all optional
-    rep: (slice, { today }) => ({ title, detail, to, action, done }),
+    rep: (slice, { today, studying }) => ({ title, detail, to, action, done }),
     notice: (slice, { today }) => ({ title, items: [{ key, label, to, meta }] }) || null,
     extra: (slice, { today }) => ({ label, title, to, meta }) || null,
     panel: { title, render: (slice) => <Component /> },
