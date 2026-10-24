@@ -4,7 +4,7 @@ import { drills } from './catalog'
 
 export const XP_PER_DRILL = 15
 
-// Drills from the subjects you're studying (all of them if you haven't picked any).
+// Drills from your daily subjects (all of them if you haven't picked any).
 export function drillsFor(subjectIds) {
   const mine = drills.filter((d) => subjectIds.includes(d.subject))
   return mine.length ? mine : drills

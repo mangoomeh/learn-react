@@ -9,7 +9,7 @@ needs no new module.
 ```
 src/
   core/      shared building blocks; knows nothing about any module
-    store/   the store, persistence, core slice (XP, activity, subjects you're studying)
+    store/   the store, persistence, core slice (XP, activity, daily plan)
     lib/     dates, levels
     components/  ui, Markdown, Heatmap
     styles/  design tokens and shared component styles
@@ -58,7 +58,8 @@ dispatch([{ type: 'learn/complete', ... }, addCards(ids), earn(30)])
 ```
 
 The `core` slice is the only state every module may read: total XP, XP per day, and `following`,
-the subjects you're studying (resolve it with `studying()` from `src/subjects/index.js`). Today
+the subjects in your daily plan (resolve it with `studying()` from `src/subjects/index.js`; it's
+empty until you choose). Today
 passes the resolved list to every `today` hook as `ctx.studying`.
 
 ### Manifest

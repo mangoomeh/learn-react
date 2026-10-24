@@ -4,6 +4,7 @@ import { allLessons, inProgress, lessonPath, lessonSize, nextElective, nextLesso
 import Library from './pages/Library'
 import Subject from './pages/Subject'
 import Lesson from './pages/Lesson'
+import Plan from './pages/Plan'
 import SubjectProgress from './components/SubjectProgress'
 import './learn.css'
 
@@ -12,6 +13,7 @@ export default {
   slice,
   routes: [
     { path: 'learn', Component: Library },
+    { path: 'learn/plan', Component: Plan },
     { path: 'learn/:subjectId', Component: Subject },
     { path: 'learn/:subjectId/:lessonId', Component: Lesson },
   ],
@@ -19,6 +21,15 @@ export default {
   cards: allLessons.flatMap((l) => l.cards.map((c) => ({ ...c, source: l.title, subject: l.subjectId }))),
   today: {
     rep(s, { today, studying }) {
+      if (!studying.length && !inProgress(s.lessons, s.drafts, { core: true })) {
+        return {
+          title: 'Choose your daily subjects',
+          to: '/learn/plan',
+          action: 'Choose',
+          done: Object.values(s.lessons).some((l) => l.completedOn === today),
+          detail: 'Pick the subjects you want to work on. Each day, Today gives you one short lesson from them.',
+        }
+      }
       const lesson = nextLesson(s.lessons, s.drafts, studying)
       const started = lesson && inProgress(s.lessons, s.drafts, { core: true })?.id === lesson.id
       return {
@@ -28,16 +39,14 @@ export default {
         done: Object.values(s.lessons).some((l) => l.completedOn === today),
         detail: lesson
           ? `${subjectById[lesson.subjectId].short} · ${lesson.title} · ${lessonSize(lesson)}`
-          : studying.length
-            ? 'You have finished every core lesson in your subjects. Add another subject in the library.'
-            : 'Pick the subjects you want to study in the library.',
+          : 'You have finished every core lesson in your daily subjects. Add another to your plan.',
       }
     },
     extra(s, { studying }) {
       const next = nextElective(s.lessons, studying)
       return next && { label: `Extra reading in ${subjectById[next.subjectId].title}:`, title: next.title, to: lessonPath(next), meta: lessonSize(next) }
     },
-    panel: { title: 'Your subjects', render: (s, { studying }) => <SubjectProgress lessons={s.lessons} subjectIds={studying} /> },
+    panel: { title: 'Your daily subjects', render: (s, { studying }) => <SubjectProgress lessons={s.lessons} subjectIds={studying} /> },
   },
   stats: {
     figures(s) {

@@ -1,7 +1,7 @@
 import { dayKey } from '../lib/dates'
 
 // The only state shared by every module: total XP, XP earned per day (streaks, heatmap) and
-// which subjects you're studying (null until you choose; see studying() in src/subjects/index.js).
+// which subjects are in your daily plan (null until you choose; see studying() in src/subjects/index.js).
 export const coreSlice = {
   initial: { xp: 0, activity: {}, following: null },
   reducer(state, action) {

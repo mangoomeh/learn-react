@@ -32,8 +32,5 @@ export const subjects = categories.flatMap((c) => c.subjects)
 
 export const subjectById = Object.fromEntries(subjects.map((s) => [s.id, s]))
 
-// What you study until you pick your own subjects in the library.
-export const starterSubjectIds = ['learning', 'engineering', 'thinking', 'decisions', 'ai']
-
-// The subjects you're studying: your choice (`following`, saved in core state) or the starter set.
-export const studying = (following) => (following ?? starterSubjectIds).filter((id) => subjectById[id])
+// The subjects in your daily plan (`following`, saved in core state). Empty until you choose some.
+export const studying = (following) => (following ?? []).filter((id) => subjectById[id])

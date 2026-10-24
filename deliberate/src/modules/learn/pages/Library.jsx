@@ -34,15 +34,21 @@ function SubjectCard({ subject, lessons, drafts }) {
   )
 }
 
-// A subject you're not studying yet: what it covers, how big it is, and a button to add it.
-function ExploreCard({ subject, lessons, following }) {
+// A subject not in your daily plan: what it covers, how big it is, and a button to add it.
+function ExploreCard({ subject, lessons, drafts, following }) {
   const list = lessonsOf(subject.id)
   const { done } = progressOf(subject.id, lessons)
+  const started = inProgress(lessons, Object.fromEntries(Object.entries(drafts).filter(([id]) => list.some((l) => l.id === id))))
   const minutes = list.reduce((n, l) => n + l.minutes, 0)
   return (
     <li className="subject-card" data-subject={subject.id}>
       <Link to={`/learn/${subject.id}`} className="subject-card-title">{subject.title}</Link>
       <p className="muted small">{subject.tagline}</p>
+      {started && (
+        <Link to={lessonPath(started)} className="subject-card-next small">
+          Continue: {started.title} →
+        </Link>
+      )}
       <div className="subject-card-foot">
         <span className="small muted num">
           {list.length} lessons · about {Math.round(minutes / 60) || 1} h{done > 0 && ` · ${done} done`}
@@ -86,7 +92,10 @@ export default function Library() {
       ) : (
         <>
           <section aria-labelledby="mine-h" className="stack-sm">
-            <h2 id="mine-h" className="section-title">Your subjects</h2>
+            <div className="row-between">
+              <h2 id="mine-h" className="section-title">Your daily plan</h2>
+              {mine.length > 0 && <Link to="/learn/plan" className="small">Edit plan</Link>}
+            </div>
             {mine.length ? (
               <ul className="subject-grid">
                 {subjects.filter((s) => mine.includes(s.id)).map((s) => (
@@ -94,14 +103,17 @@ export default function Library() {
                 ))}
               </ul>
             ) : (
-              <p className="muted">You aren't studying anything yet. Add a subject below and Today will pick a lesson from it each day.</p>
+              <div className="plan-empty">
+                <p className="muted">Choose the subjects you want to work on. Each day, Today gives you one short lesson from them.</p>
+                <Link to="/learn/plan" className="btn btn-primary">Choose daily subjects</Link>
+              </div>
             )}
           </section>
 
           <section aria-labelledby="explore-h" className="stack">
             <div>
-              <h2 id="explore-h" className="section-title">Explore</h2>
-              <p className="muted small">Add a subject to include it in your daily lesson, drills and progress. You can open any lesson without adding it.</p>
+              <h2 id="explore-h" className="section-title">{mine.length ? 'More subjects' : 'All subjects'}</h2>
+              <p className="muted small">You can open any lesson, whether or not its subject is in your daily plan.</p>
             </div>
             {categories.map((c) => {
               const rest = c.subjects.filter((s) => !mine.includes(s.id))
@@ -110,13 +122,13 @@ export default function Library() {
                   <h3 id={`cat-${c.id}`} className="category-title">{c.title}</h3>
                   <ul className="subject-grid">
                     {rest.map((s) => (
-                      <ExploreCard key={s.id} subject={s} lessons={lessons} following={following} />
+                      <ExploreCard key={s.id} subject={s} lessons={lessons} drafts={drafts} following={following} />
                     ))}
                   </ul>
                 </section>
               )
             })}
-            {subjects.every((s) => mine.includes(s.id)) && <p className="muted small">You're studying every subject in the library.</p>}
+            {subjects.every((s) => mine.includes(s.id)) && <p className="muted small">Every subject in the library is in your daily plan.</p>}
           </section>
         </>
       )}

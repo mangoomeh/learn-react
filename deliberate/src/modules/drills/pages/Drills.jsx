@@ -116,7 +116,7 @@ export default function Drills() {
   return (
     <div className="stack-lg">
       <PageHeader eyebrow="Practice" title="Drills">
-        Short exercises that make you apply what you learn, from the subjects you're studying.
+        Short exercises that make you apply what you learn, from your daily subjects (or every subject, until you choose some).
       </PageHeader>
 
       <div className="chips">

@@ -20,7 +20,7 @@ export function completeLesson(lesson, score, previous) {
 // so you can leave and pick up later.
 export const saveDraft = (lessonId, changes) => ({ type: 'learn/saveDraft', lessonId, changes })
 
-// Add a subject to the ones you're studying, or remove it.
+// Add a subject to your daily plan, or remove it.
 export function toggleStudying(following, subjectId) {
   const ids = studying(following)
   return follow(ids.includes(subjectId) ? ids.filter((id) => id !== subjectId) : [...ids, subjectId])

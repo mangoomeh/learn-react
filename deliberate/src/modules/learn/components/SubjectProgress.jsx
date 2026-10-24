@@ -3,13 +3,13 @@ import { ProgressBar, SubjectTag } from '../../../core/components/ui'
 import { subjects } from '../../../subjects/index.js'
 import { lessonsOf } from '../catalog'
 
-// Lessons finished per subject. Shown on Today (for the subjects you're studying) and, with quiz
+// Lessons finished per subject. Shown on Today (for the subjects in your daily plan) and, with quiz
 // accuracy, on Stats (for every subject you've finished a lesson in).
 export default function SubjectProgress({ lessons, subjectIds, showAccuracy = false, onlyStarted = false }) {
   const shown = subjects
     .filter((s) => !subjectIds || subjectIds.includes(s.id))
     .filter((s) => !onlyStarted || lessonsOf(s.id).some((l) => lessons[l.id]))
-  if (!shown.length) return <p className="muted small">{onlyStarted ? 'Finish a lesson to see your progress by subject.' : <>No subjects yet. <Link to="/learn">Pick some in the library.</Link></>}</p>
+  if (!shown.length) return <p className="muted small">{onlyStarted ? 'Finish a lesson to see your progress by subject.' : <>No daily subjects yet. <Link to="/learn/plan">Choose some.</Link></>}</p>
   return (
     <ul className="subject-progress">
       {shown.map((s) => {
