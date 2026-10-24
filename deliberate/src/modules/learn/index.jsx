@@ -18,8 +18,8 @@ export default {
   nav: { to: '/learn', label: 'Library' },
   cards: allLessons.flatMap((l) => l.cards.map((c) => ({ ...c, source: l.title, subject: l.subjectId }))),
   today: {
-    rep(s, { today }) {
-      const lesson = nextLesson(s.lessons, s.drafts)
+    rep(s, { today, studying }) {
+      const lesson = nextLesson(s.lessons, s.drafts, studying)
       const started = lesson && inProgress(s.lessons, s.drafts, { core: true })?.id === lesson.id
       return {
         title: started ? 'Finish your lesson' : 'Study one lesson',
@@ -28,14 +28,16 @@ export default {
         done: Object.values(s.lessons).some((l) => l.completedOn === today),
         detail: lesson
           ? `${subjectById[lesson.subjectId].short} · ${lesson.title} · ${lessonSize(lesson)}`
-          : 'You have finished every core lesson. Retake any to sharpen it.',
+          : studying.length
+            ? 'You have finished every core lesson in your subjects. Add another subject in the library.'
+            : 'Pick the subjects you want to study in the library.',
       }
     },
-    extra(s) {
-      const next = nextElective(s.lessons)
+    extra(s, { studying }) {
+      const next = nextElective(s.lessons, studying)
       return next && { label: `Extra reading in ${subjectById[next.subjectId].title}:`, title: next.title, to: lessonPath(next), meta: lessonSize(next) }
     },
-    panel: { title: 'Subjects', render: (s) => <SubjectProgress lessons={s.lessons} /> },
+    panel: { title: 'Your subjects', render: (s, { studying }) => <SubjectProgress lessons={s.lessons} subjectIds={studying} /> },
   },
   stats: {
     figures(s) {
@@ -47,6 +49,6 @@ export default {
         ['Quiz accuracy', total ? `${Math.round((score / total) * 100)}%` : '–'],
       ]
     },
-    panel: { title: 'By subject', render: (s) => <SubjectProgress lessons={s.lessons} showAccuracy /> },
+    panel: { title: 'By subject', render: (s) => <SubjectProgress lessons={s.lessons} showAccuracy onlyStarted /> },
   },
 }

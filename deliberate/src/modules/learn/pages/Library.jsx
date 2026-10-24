@@ -2,10 +2,11 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useSlice } from '../../../core/store/ProgressStore'
 import { PageHeader, ProgressBar } from '../../../core/components/ui'
-import { subjects, subjectById } from '../../../subjects/index.js'
+import { categories, studying, subjects, subjectById } from '../../../subjects/index.js'
 import { allLessons, inProgress, lessonPath, lessonsOf, progressOf } from '../catalog'
 import { isStarted } from '../slice'
 import LessonRow from '../components/LessonRow'
+import StudyButton from '../components/StudyButton'
 
 const matches = (lesson, q) => `${lesson.title} ${lesson.summary} ${lesson.body} ${(lesson.inTheWild ?? []).join(' ')}`.toLowerCase().includes(q)
 
@@ -33,8 +34,29 @@ function SubjectCard({ subject, lessons, drafts }) {
   )
 }
 
+// A subject you're not studying yet: what it covers, how big it is, and a button to add it.
+function ExploreCard({ subject, lessons, following }) {
+  const list = lessonsOf(subject.id)
+  const { done } = progressOf(subject.id, lessons)
+  const minutes = list.reduce((n, l) => n + l.minutes, 0)
+  return (
+    <li className="subject-card" data-subject={subject.id}>
+      <Link to={`/learn/${subject.id}`} className="subject-card-title">{subject.title}</Link>
+      <p className="muted small">{subject.tagline}</p>
+      <div className="subject-card-foot">
+        <span className="small muted num">
+          {list.length} lessons · about {Math.round(minutes / 60) || 1} h{done > 0 && ` · ${done} done`}
+        </span>
+        <StudyButton subject={subject} following={following} compact />
+      </div>
+    </li>
+  )
+}
+
 export default function Library() {
   const { lessons, drafts } = useSlice('learn')
+  const { following } = useSlice('core')
+  const mine = studying(following)
   const [query, setQuery] = useState('')
   const q = query.trim().toLowerCase()
   const results = q ? allLessons.filter((l) => matches(l, q)) : []
@@ -62,11 +84,41 @@ export default function Library() {
           </ul>
         </section>
       ) : (
-        <ul className="subject-grid">
-          {subjects.map((s) => (
-            <SubjectCard key={s.id} subject={s} lessons={lessons} drafts={drafts} />
-          ))}
-        </ul>
+        <>
+          <section aria-labelledby="mine-h" className="stack-sm">
+            <h2 id="mine-h" className="section-title">Your subjects</h2>
+            {mine.length ? (
+              <ul className="subject-grid">
+                {subjects.filter((s) => mine.includes(s.id)).map((s) => (
+                  <SubjectCard key={s.id} subject={s} lessons={lessons} drafts={drafts} />
+                ))}
+              </ul>
+            ) : (
+              <p className="muted">You aren't studying anything yet. Add a subject below and Today will pick a lesson from it each day.</p>
+            )}
+          </section>
+
+          <section aria-labelledby="explore-h" className="stack">
+            <div>
+              <h2 id="explore-h" className="section-title">Explore</h2>
+              <p className="muted small">Add a subject to include it in your daily lesson, drills and progress. You can open any lesson without adding it.</p>
+            </div>
+            {categories.map((c) => {
+              const rest = c.subjects.filter((s) => !mine.includes(s.id))
+              return rest.length > 0 && (
+                <section key={c.id} aria-labelledby={`cat-${c.id}`} className="stack-sm">
+                  <h3 id={`cat-${c.id}`} className="category-title">{c.title}</h3>
+                  <ul className="subject-grid">
+                    {rest.map((s) => (
+                      <ExploreCard key={s.id} subject={s} lessons={lessons} following={following} />
+                    ))}
+                  </ul>
+                </section>
+              )
+            })}
+            {subjects.every((s) => mine.includes(s.id)) && <p className="muted small">You're studying every subject in the library.</p>}
+          </section>
+        </>
       )}
     </div>
   )

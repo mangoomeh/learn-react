@@ -1,4 +1,5 @@
-import { earn } from '../../core/store/core'
+import { earn, follow } from '../../core/store/core'
+import { studying } from '../../subjects/index.js'
 import { addCards } from '../review/api'
 
 export const XP_PER_LESSON = 30
@@ -18,3 +19,9 @@ export function completeLesson(lesson, score, previous) {
 // Remember where you are in a lesson (quiz answers, practice notes, scroll position)
 // so you can leave and pick up later.
 export const saveDraft = (lessonId, changes) => ({ type: 'learn/saveDraft', lessonId, changes })
+
+// Add a subject to the ones you're studying, or remove it.
+export function toggleStudying(following, subjectId) {
+  const ids = studying(following)
+  return follow(ids.includes(subjectId) ? ids.filter((id) => id !== subjectId) : [...ids, subjectId])
+}

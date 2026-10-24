@@ -1,12 +1,11 @@
 import { useState } from 'react'
 import { useDispatch, useSlice } from '../../../core/store/ProgressStore'
-import { subjectById } from '../../../subjects/index.js'
+import { studying, subjectById } from '../../../subjects/index.js'
 import { dayKey } from '../../../core/lib/dates'
 import { PageHeader, SubjectTag } from '../../../core/components/ui'
 import { Inline } from '../../../core/components/Markdown'
 import { KINDS } from '../kinds'
-import { drills } from '../catalog'
-import { dailyDrill, logDrill, XP_PER_DRILL } from '../api'
+import { dailyDrill, drillsFor, logDrill, XP_PER_DRILL } from '../api'
 
 function Drill({ drill, onDone, logged }) {
   const [picked, setPicked] = useState(null)
@@ -91,13 +90,17 @@ function Drill({ drill, onDone, logged }) {
 
 export default function Drills() {
   const { log: logByDay } = useSlice('drills')
+  const { following } = useSlice('core')
   const dispatch = useDispatch()
   const today = dayKey()
   const log = logByDay[today] || []
-  const daily = dailyDrill(today)
+  const subjectIds = studying(following)
+  const drills = drillsFor(subjectIds)
+  const kinds = Object.entries(KINDS).filter(([id]) => drills.some((d) => d.kind === id))
+  const daily = dailyDrill(today, subjectIds)
   const [current, setCurrent] = useState(daily)
   const [filter, setFilter] = useState('all')
-  const everDone = new Set(Object.values(logByDay).flat().map((c) => c.id))
+  const everDone = new Set(Object.values(logByDay).flat().map((c) => c.id).filter((id) => drills.some((d) => d.id === id)))
 
   function another() {
     const pool = drills.filter((c) => c.id !== current.id && (filter === 'all' || c.kind === filter))
@@ -113,7 +116,7 @@ export default function Drills() {
   return (
     <div className="stack-lg">
       <PageHeader eyebrow="Practice" title="Drills">
-        Short exercises that make you apply what you learn: spot fallacies, reason about code, estimate, and work through decisions.
+        Short exercises that make you apply what you learn, from the subjects you're studying.
       </PageHeader>
 
       <div className="chips">
@@ -134,7 +137,7 @@ export default function Drills() {
         <label htmlFor="drill-filter" className="small muted">Next drill type</label>
         <select id="drill-filter" value={filter} onChange={(e) => setFilter(e.target.value)}>
           <option value="all">Any type</option>
-          {Object.entries(KINDS).map(([id, k]) => (
+          {kinds.map(([id, k]) => (
             <option key={id} value={id}>{k.label}</option>
           ))}
         </select>

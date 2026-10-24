@@ -1,12 +1,18 @@
+import { Link } from 'react-router-dom'
 import { ProgressBar, SubjectTag } from '../../../core/components/ui'
 import { subjects } from '../../../subjects/index.js'
 import { lessonsOf } from '../catalog'
 
-// Lessons finished per subject. Shown on Today and, with quiz accuracy, on Stats.
-export default function SubjectProgress({ lessons, showAccuracy = false }) {
+// Lessons finished per subject. Shown on Today (for the subjects you're studying) and, with quiz
+// accuracy, on Stats (for every subject you've finished a lesson in).
+export default function SubjectProgress({ lessons, subjectIds, showAccuracy = false, onlyStarted = false }) {
+  const shown = subjects
+    .filter((s) => !subjectIds || subjectIds.includes(s.id))
+    .filter((s) => !onlyStarted || lessonsOf(s.id).some((l) => lessons[l.id]))
+  if (!shown.length) return <p className="muted small">{onlyStarted ? 'Finish a lesson to see your progress by subject.' : <>No subjects yet. <Link to="/learn">Pick some in the library.</Link></>}</p>
   return (
     <ul className="subject-progress">
-      {subjects.map((s) => {
+      {shown.map((s) => {
         const list = lessonsOf(s.id)
         const done = list.filter((l) => lessons[l.id])
         const score = done.reduce((n, l) => n + lessons[l.id].score, 0)

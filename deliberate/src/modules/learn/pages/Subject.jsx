@@ -5,6 +5,7 @@ import { subjectById } from '../../../subjects/index.js'
 import { lessonsOf, progressOf } from '../catalog'
 import { isStarted } from '../slice'
 import LessonRow from '../components/LessonRow'
+import StudyButton from '../components/StudyButton'
 
 function Unit({ unit, subjectId, lessons, drafts }) {
   const list = lessonsOf(subjectId).filter((l) => l.unitId === unit.id)
@@ -28,6 +29,7 @@ function Unit({ unit, subjectId, lessons, drafts }) {
 export default function Subject() {
   const { subjectId } = useParams()
   const { lessons, drafts } = useSlice('learn')
+  const { following } = useSlice('core')
   const subject = subjectById[subjectId]
 
   if (!subject) {
@@ -56,6 +58,7 @@ export default function Subject() {
         <div className="subject-meter">
           <span className="small muted num">{done} of {total} lessons</span>
           <ProgressBar value={done / total} subject={subject.id} label={`${subject.title} progress`} />
+          <StudyButton subject={subject} following={following} />
         </div>
       </header>
 

@@ -9,8 +9,8 @@ export default {
   routes: [{ path: 'drills', Component: Drills }],
   nav: { to: '/drills', label: 'Drills' },
   today: {
-    rep(s, { today }) {
-      const drill = dailyDrill(today)
+    rep(s, { today, studying }) {
+      const drill = dailyDrill(today, studying)
       return {
         title: 'Daily drill',
         to: '/drills',

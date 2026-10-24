@@ -8,4 +8,12 @@ export const KINDS = {
   estimate: { label: 'Fermi estimate' },
   decision: { label: 'Decision scenario' },
   ai: { label: 'AI in practice' },
+  learning: { label: 'Study smarter' },
+  self: { label: 'Self-management' },
+  conversation: { label: 'Conversation scenario' },
+  writing: { label: 'Rewrite it' },
+  money: { label: 'Money maths' },
+  evidence: { label: 'Check the claim' },
+  business: { label: 'Business case' },
+  career: { label: 'Career move' },
 }

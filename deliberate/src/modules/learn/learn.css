@@ -66,3 +66,6 @@
 .resume-note .link { color: inherit; }
 @media (max-width: 760px) { .resume-note { bottom: calc(80px + env(safe-area-inset-bottom, 0px)); } }
 .sources { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 4px; color: var(--muted); }
+.subject-card-foot { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; margin-top: auto; }
+.category-title { font-size: var(--step-0); font-weight: 700; color: var(--ink); margin: 0; }
+.subject-meter .btn { align-self: flex-start; margin-top: 4px; }

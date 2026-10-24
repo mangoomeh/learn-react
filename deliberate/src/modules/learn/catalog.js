@@ -36,11 +36,11 @@ export function inProgress(completed, drafts, { core } = {}) {
 }
 
 // Today's lesson: a core lesson you've started, otherwise the first unfinished core lesson in the
-// least-progressed subject, so every subject grows together. Optional ("elective") units are never picked here.
-export function nextLesson(completed, drafts = {}) {
+// least-progressed subject you're studying, so they grow together. Optional ("elective") units are never picked here.
+export function nextLesson(completed, drafts = {}, subjectIds = subjects.map((s) => s.id)) {
   const started = inProgress(completed, drafts, { core: true })
   if (started) return started
-  const ranked = [...subjects].sort((a, b) => progressOf(a.id, completed, { core: true }).ratio - progressOf(b.id, completed, { core: true }).ratio)
+  const ranked = subjects.filter((s) => subjectIds.includes(s.id)).sort((a, b) => progressOf(a.id, completed, { core: true }).ratio - progressOf(b.id, completed, { core: true }).ratio)
   for (const s of ranked) {
     const lesson = lessonsOf(s.id, { core: true }).find((l) => !completed[l.id])
     if (lesson) return lesson
@@ -48,8 +48,9 @@ export function nextLesson(completed, drafts = {}) {
   return null
 }
 
-// The first unfinished lesson from an optional unit, offered on Today as extra reading.
-export const nextElective = (completed) => allLessons.find((l) => l.elective && !completed[l.id]) ?? null
+// The first unfinished lesson from an optional unit in a subject you're studying, offered on Today as extra reading.
+export const nextElective = (completed, subjectIds) =>
+  allLessons.find((l) => l.elective && !completed[l.id] && (!subjectIds || subjectIds.includes(l.subjectId))) ?? null
 
 // The lesson after this one within its subject.
 export function nextInSubject(lesson) {

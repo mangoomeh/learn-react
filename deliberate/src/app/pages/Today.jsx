@@ -4,6 +4,7 @@ import { useModules } from '../../core/modules'
 import { addDays, currentStreak, dayKey, formatDay, parseDay } from '../../core/lib/dates'
 import { levelFor, levelName } from '../../core/lib/levels'
 import { ProgressBar } from '../../core/components/ui'
+import { studying } from '../../subjects/index.js'
 import Heatmap from '../../core/components/Heatmap'
 
 function Rep({ done, to, title, detail, action }) {
@@ -27,7 +28,7 @@ export default function Today() {
   const state = useWholeState()
   const modules = useModules()
   const today = dayKey()
-  const ctx = { today }
+  const ctx = { today, studying: studying(state.core.following) }
   const collect = (key) =>
     modules.map((m) => m.today?.[key] && { id: m.id, value: m.today[key](state[m.id], ctx) }).filter((c) => c?.value)
   const reps = collect('rep')
